@@ -1,0 +1,61 @@
+@model LibraryManagementSystem.Models.Book
+@{
+    ViewData["Title"] = "Add New Book";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-success text-white text-center fs-5 fw-bold rounded-top-4">
+            <i class="bi bi-plus-circle"></i> Add New Book
+        </div>
+
+        <div class="card-body p-4">
+            <form asp-action="Create" enctype="multipart/form-data" method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Title</label>
+                    <input asp-for="Title" class="form-control shadow-sm" placeholder="Enter book title" />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Author</label>
+                    <input asp-for="Author" class="form-control shadow-sm" placeholder="Enter author name" />
+                    <span asp-validation-for="Author" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Department</label>
+                    <select asp-for="Department" class="form-select shadow-sm">
+                        <option value="">-- Select Department --</option>
+                        <option>CSE</option>
+                        <option>IT</option>
+                        <option>Mechanical</option>
+                        <option>Chemical</option>
+                        <option>Civil</option>
+                        <option>Electrical</option>
+                    </select>
+                    <span asp-validation-for="Department" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Cover Image</label>
+                    <input type="file" name="imageFile" class="form-control shadow-sm" />
+                    <small class="text-muted">Upload a JPG/PNG cover image</small>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success shadow-sm">
+                        <i class="bi bi-check-circle"></i> Add Book
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                        <i class="bi bi-arrow-left"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

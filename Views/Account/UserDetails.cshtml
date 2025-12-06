@@ -1,0 +1,123 @@
+@model LibraryManagementSystem.Models.User
+@{
+    ViewData["Title"] = "User Details";
+    var books = ViewBag.Books as IEnumerable<dynamic>;
+    var userRole = Context.Session.GetString("Role") ?? "";
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary mb-4">
+        <i class="fas fa-user-circle"></i> User Profile - @Model.FullName
+    </h2>
+
+    <div class="row">
+        <!-- ✅ Left Side: User Information -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="text-primary mb-3"><i class="fas fa-id-card"></i> Basic Information</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Login ID:</strong> @Model.LoginId</li>
+                        <li class="list-group-item"><strong>Full Name:</strong> @Model.FullName</li>
+                        <li class="list-group-item"><strong>Email:</strong> @Model.Email</li>
+                        <li class="list-group-item"><strong>Phone:</strong> @Model.Phone</li>
+                        <li class="list-group-item"><strong>Gender:</strong> @Model.Gender</li>
+                        <li class="list-group-item">
+                            <strong>Date of Birth:</strong>
+                            @(Model.DateOfBirth?.ToString("dd MMM yyyy") ?? "Not Provided")
+                        </li>
+                        <li class="list-group-item"><strong>Department:</strong> @Model.Department</li>
+                        @if (!string.IsNullOrEmpty(Model.Semester))
+                        {
+                            <li class="list-group-item"><strong>Semester:</strong> @Model.Semester</li>
+                        }
+                        <li class="list-group-item">
+                            <strong>Address:</strong> @(Model.Address ?? "Not Provided")
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ Right Side: Issued Books -->
+        <div class="col-md-7 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="text-primary mb-3"><i class="fas fa-book"></i> Issued Books</h5>
+
+                    @if (books != null && books.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Author</th>
+                                        <th>Issued On</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var book in books)
+                                    {
+                                        bool isOverdue = book?.DueAt is DateTime due && due < DateTime.Now;
+                                        string status = book?.Status?.ToString() ?? "N/A";
+
+                                        <tr class="@(isOverdue ? "table-danger" : "")">
+                                            <td>@(book?.Title ?? "-")</td>
+                                            <td>@(book?.Author ?? "-")</td>
+                                            <td>@(book?.IssuedAt?.ToString("dd MMM yyyy") ?? "-")</td>
+                                            <td>@(book?.DueAt?.ToString("dd MMM yyyy") ?? "-")</td>
+                                            <td>
+                                                @if (isOverdue)
+                                                {
+                                                    <span class="badge bg-danger">Overdue</span>
+                                                }
+                                                else if (status == "Issued")
+                                                {
+                                                    <span class="badge bg-success">On Time</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">@status</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No books currently issued.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Action Buttons -->
+    <div class="d-flex justify-content-between mt-4">
+        <a href="@Url.Action("UserInfo", "Account")" class="btn btn-outline-secondary">
+            ← Back to User List
+        </a>
+
+        @if (userRole == "Admin" || userRole == "Librarian")
+        {
+            <div>
+                <a href="@Url.Action("EditUser", "Account", new { id = Model.LoginId })" 
+                   class="btn btn-warning me-2">
+                    ✏️ Edit User
+                </a>
+
+                <form asp-action="SoftDeleteUser" method="post" asp-route-id="@Model.Id"
+                      style="display:inline;"
+                      onsubmit="return confirm('Are you sure you want to remove this user?');">
+                    <button type="submit" class="btn btn-danger">❌ Delete User</button>
+                </form>
+            </div>
+        }
+    </div>
+</div>

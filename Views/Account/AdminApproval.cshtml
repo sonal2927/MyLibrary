@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Pending User Approvals";
+    var students = ViewBag.Students as List<LibraryManagementSystem.Models.User> ?? new();
+    var faculty = ViewBag.Faculty as List<LibraryManagementSystem.Models.User> ?? new();
+    var librarians = ViewBag.Librarians as List<LibraryManagementSystem.Models.User> ?? new();
+}
+
+<div class="container mt-4">
+    <h2 class="text-success mb-4">🔒 Pending User Approvals</h2>
+
+    <!-- STUDENTS -->
+    <h4 class="text-primary">🎓 Students</h4>
+    <partial name="_PendingUserTable" model="students" />
+
+    <!-- FACULTY -->
+    <h4 class="text-warning mt-5">🏫 Faculty</h4>
+    <partial name="_PendingUserTable" model="faculty" />
+
+    <!-- LIBRARIANS -->
+    <h4 class="text-info mt-5">📖 Librarians</h4>
+    <partial name="_PendingUserTable" model="librarians" />
+</div>

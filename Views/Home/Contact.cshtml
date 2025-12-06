@@ -1,0 +1,100 @@
+@{
+    ViewData["Title"] = "Contact Us";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .contact-hero {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .contact-section {
+            padding: 60px 20px;
+        }
+
+        .contact-card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .contact-icon {
+            font-size: 1.3rem;
+            color: #6a11cb;
+            margin-right: 10px;
+        }
+
+        .map-box {
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .contact-details p {
+            font-size: 1.1rem;
+        }
+    </style>
+}
+
+<div class="contact-hero">
+    <div class="container">
+        <h1 class="display-5 fw-bold">📞 Contact the Library</h1>
+        <p class="lead">We’re here to help! Reach out with your queries or feedback.</p>
+    </div>
+</div>
+
+<div class="contact-section container">
+    <div class="row g-4 align-items-stretch">
+        <div class="col-md-6">
+            <div class="contact-card h-100 contact-details">
+                <h3 class="mb-4">📬 Get in Touch</h3>
+
+                <p>
+                    <i class="bi bi-envelope-fill contact-icon"></i>
+                    <strong>Email:</strong>
+                    <a href="mailto:info@svmit.ac.in" class="text-decoration-none">info@svmit.ac.in</a>
+                </p>
+
+                <p>
+                    <i class="bi bi-telephone-fill contact-icon"></i>
+                    <strong>Phone:</strong> +91-2642-245864
+                </p>
+
+                <p>
+                    <i class="bi bi-geo-alt-fill contact-icon"></i>
+                    <strong>Address:</strong><br />
+                    College Campus, College Road,<br />
+                    Bharuch - 392001, Gujarat, India
+                </p>
+
+                <hr />
+
+                <h5>🕒 Office Hours</h5>
+                <p>Monday – Friday: 8:30 AM to 4:00 PM</p>
+                <p>Saturday: 8:30 AM to 1:00 PM</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="contact-card h-100">
+                <h3 class="mb-4">📍 Find Us</h3>
+                <div class="map-box mb-3">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3719.3935039513265!2d72.99999999999999!3d21.712938900000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be0333cbadf3e33%3A0xf4067b7a5b09e0e3!2sSVMIT%20College!5e0!3m2!1sen!2sin!4v1715151515151"
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <p class="text-muted small">* Map is for illustration purposes only. Please confirm with the official address.</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,159 @@
+@model List<LibraryManagementSystem.Models.ViewModels.IssuedBookReportViewModel>
+@{
+    ViewData["Title"] = "Issued Books Report";
+}
+
+<div class="container mt-4">
+    <!-- Title + Export -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold">
+            <i class="fas fa-clipboard-list"></i> Issued Books Report
+        </h2>
+        <div>
+            <a href="@Url.Action("ExportIssuedBooksToExcel","Books")" class="btn btn-success btn-sm">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+           
+        </div>
+    </div>
+
+    <!-- Dashboard Stats -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h6 class="text-muted">Total Issued</h6>
+                <h3 class="text-primary">@ViewBag.TotalIssued</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h6 class="text-muted">Returned</h6>
+                <h3 class="text-success">@ViewBag.TotalReturned</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h6 class="text-muted">Not Returned</h6>
+                <h3 class="text-warning">@ViewBag.TotalNotReturned</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="d-flex justify-content-center mb-4">
+        <div style="max-width: 300px; width:100%;">
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+
+    <!-- ✅ Search Bar -->
+    <div class="input-group mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search by Book Title, User Name, or Role...">
+        <span class="input-group-text"><i class="fas fa-search"></i></span>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow-lg border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0" id="issuedBooksTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Book Title</th>
+                        <th>User Name</th>
+                        <th>Role</th>
+                        <th>Issued Date</th>
+                        <th>Returned Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var r in Model)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@r.BookTitle</td>
+                                <td>@r.UserName</td>
+                                <td><span class="badge bg-dark">@r.UserRole</span></td>
+                                <td>@r.IssuedAtStr</td>
+                                <td>@r.ReturnedAtStr</td>
+                                <td>
+                                    @if (r.Status == "Returned")
+                                    {
+                                        <span class="badge bg-success">Returned</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Not Returned</span>
+                                    }
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-3">No records found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("IssuedBooksReport","Books", new { page = i, pageSize = ViewBag.PageSize })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // ✅ Chart.js Doughnut Chart
+        const ctx = document.getElementById('statusChart');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Returned', 'Not Returned'],
+                datasets: [{
+                    data: [@ViewBag.TotalReturned, @ViewBag.TotalNotReturned],
+                    backgroundColor: ['#28a745', '#ffc107'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 15, padding: 15, font: { size: 12 } }
+                    }
+                }
+            }
+        });
+
+        // ✅ Search Filter
+        document.getElementById("searchInput").addEventListener("keyup", function () {
+            const filter = this.value.toLowerCase();
+            const rows = document.querySelectorAll("#issuedBooksTable tbody tr");
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? "" : "none";
+            });
+        });
+    </script>
+}

@@ -1,0 +1,50 @@
+@model List<LibraryManagementSystem.Models.BookRequest>
+@{
+    ViewData["Title"] = "My Book Requests";
+}
+
+<div class="container mt-4">
+    <h2>📚 My Book Requests</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning">You haven't made any requests yet.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover mt-3">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Requested On</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var req in Model)
+                {
+                    <tr>
+                        <td>@req.Title</td>
+                        <td>@req.RequestDate.ToString("dd-MMM-yyyy")</td>
+                        <td>
+                            @switch (req.Status)
+                            {
+                                case "Approved":
+                                    <span class="badge bg-success">✅ Approved</span>
+                                    break;
+                                case "Rejected":
+                                    <span class="badge bg-danger">❌ Rejected</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-warning text-dark">⏳ Pending</span>
+                                    break;
+                            }
+                        </td>
+                        <td>@req.Message</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

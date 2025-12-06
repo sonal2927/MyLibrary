@@ -1,0 +1,170 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    string? role = HttpContextAccessor.HttpContext?.Session?.GetString("UserRole");
+    string? loginId = HttpContextAccessor.HttpContext?.Session?.GetString("LoginId");
+    bool isLoggedIn = !string.IsNullOrEmpty(role) && !string.IsNullOrEmpty(loginId);
+
+    string GetRoleColor(string? userRole) => userRole switch
+    {
+        "Admin" => "bg-success",
+        "Student" => "bg-primary",
+        "Faculty" => "bg-warning text-dark",
+        "Librarian" => "bg-purple text-white",
+        _ => "bg-secondary"
+    };
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Library Management</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+        .toast-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1055;
+        }
+        .bg-purple {
+            background-color: #6f42c1 !important;
+        }
+    </style>
+
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
+        <div class="container-fluid">
+
+            <a class="navbar-brand fw-bold" href="/">📘 MyLibrary</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+
+                    @if (!isLoggedIn)
+                    {
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">🏠 Home</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="AboutLibrary">📘 About Library</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="Index">📚 Books</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="Search">🔍 Search</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contact">📞 Contact Us</a></li>
+                    }
+
+                    @* ---------------- ROLE MENUS ---------------- *@
+
+                    @if (role == "Admin")
+                    {
+                        <li class="nav-item"><a class="nav-link" href="/Account/AdminApproval">👥 Approve Users</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Account/UserInfo">📋 User Info</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Announcement/Create">📢 Make Announcement</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Announcement/List">📜 View Announcements</a></li>
+                    }
+
+                    @if (role == "Student")
+                    {
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="StudentDashboard">📚 Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="BrowseBooks">📘 Browse Books</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="IssuedBooks">📖 My Issued Books</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="MyProfile">👤 My Profile</a></li>
+                    }
+
+                    @if (role == "Faculty")
+                    {
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="FacultyDashboard">🏫 Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="BrowseBooks">📘 Browse Books</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="IssuedBooks">📖 My Issued Books</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="MyProfile">👤 My Profile</a></li>
+                    }
+
+                    @if (role == "Librarian")
+                    {
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="LibrarianDashboard">📖 Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="ManageBookRequests">📥 Manage Requests</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="BrowseBooks">📘 All Books</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Announcement" asp-action="Create">📢 Make Announcement</a></li>
+                    }
+                </ul>
+
+                <!-- RIGHT SIDE -->
+                <ul class="navbar-nav ms-auto align-items-center">
+
+                    @if (isLoggedIn)
+                    {
+                        <li class="nav-item text-white me-2 small text-end">
+                            <div class="fw-semibold">👋 Welcome</div>
+                            <div>@loginId</div>
+                        </li>
+
+                        <li class="nav-item">
+                            <span class="badge @GetRoleColor(role) px-3 py-1 rounded-pill shadow-sm">@role</span>
+                        </li>
+
+                        <li class="nav-item">
+                            <form method="post" asp-controller="Account" asp-action="Logout" class="ms-2">
+                                <button type="submit" class="btn btn-sm btn-outline-light">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Login">🔐 Login</a>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- TOAST -->
+    <div class="toast-container">
+
+        @if (TempData["ToastMessage"] != null)
+        {
+            var toastType = TempData["ToastType"]?.ToString() ?? "info";
+            <div class="toast show text-white bg-@toastType border-0">
+                <div class="d-flex">
+                    <div class="toast-body">@TempData["ToastMessage"]</div>
+                    <button class="btn-close btn-close-white m-auto me-2" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- MAIN -->
+    <div class="container mt-4">
+        @RenderBody()
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-5 py-3" style="background: #283E51; color: white;">
+        <div class="text-center">
+            &copy; 2025 <strong>Library Management System</strong>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.querySelectorAll('.toast').forEach(t => new bootstrap.Toast(t, { delay: 4000 }).show());
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

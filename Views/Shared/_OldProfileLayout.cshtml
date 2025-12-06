@@ -1,0 +1,108 @@
+@model LibraryManagementSystem.Models.User
+@{
+    ViewData["Title"] = "My Profile";
+    var isEditMode = ViewBag.IsEditMode as bool? ?? false;
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary mb-4"><i class="fas fa-user"></i> My Profile</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <img src="@(string.IsNullOrEmpty(Model.ProfilePicturePath) ? "/images/default-profile.png" : Model.ProfilePicturePath)" 
+                 class="rounded-circle mb-3" width="200" height="200" />
+
+            <form asp-action="UploadProfilePicture" asp-controller="Account" enctype="multipart/form-data" method="post">
+                <input type="file" name="ProfilePicture" class="form-control mb-2" />
+                <button type="submit" class="btn btn-primary btn-sm">Upload</button>
+            </form>
+
+            <form asp-action="RemoveProfilePicture" asp-controller="Account" method="post" class="mt-2">
+                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+            </form>
+        </div>
+
+        <div class="col-md-8">
+            <form asp-action="UpdateProfile" asp-controller="Books" method="post">
+                <input type="hidden" name="Id" value="@Model.Id" />
+
+                <p><strong>Full Name:</strong>
+                    @if (isEditMode)
+                    {
+                        <input type="text" name="FullName" value="@Model.FullName" class="form-control" />
+                    }
+                    else { @Model.FullName }
+                </p>
+
+                <p><strong>Enrollment No.:</strong> @Model.EnrollmentNumber</p>
+
+                <p><strong>Email:</strong>
+                    @if (isEditMode)
+                    {
+                        <input type="email" name="Email" value="@Model.Email" class="form-control" />
+                    }
+                    else { @Model.Email }
+                </p>
+
+                <p><strong>Phone:</strong>
+                    @if (isEditMode)
+                    {
+                        <input type="text" name="Phone" value="@Model.Phone" class="form-control" />
+                    }
+                    else { @Model.Phone }
+                </p>
+
+                <p><strong>Gender:</strong> @Model.Gender</p>
+                <p><strong>Department:</strong> @Model.Department</p>
+                <p><strong>Semester:</strong> @Model.Semester</p>
+                <p><strong>Date of Birth:</strong> 
+                    @(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("dd MMM yyyy") : "Not Provided")
+                </p>
+
+                <p><strong>Address:</strong>
+                    @if (isEditMode)
+                    {
+                        <textarea name="Address" class="form-control">@Model.Address</textarea>
+                    }
+                    else { @Model.Address }
+                </p>
+
+                @if (isEditMode)
+                {
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <a href="@Url.Action("MyProfile", "Books")" class="btn btn-secondary">Cancel</a>
+                }
+                else
+                {
+                    <a href="@Url.Action("MyProfile", "Books", new { edit = true })" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </a>
+                }
+            </form>
+        </div>
+    </div>
+
+    <hr />
+
+    <h4 class="mt-4"><i class="fas fa-lock"></i> Change Password</h4>
+    <form asp-action="ChangePassword" asp-controller="Account" method="post">
+        <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" name="CurrentPassword" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>New Password</label>
+            <input type="password" name="NewPassword" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" name="ConfirmPassword" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-warning mt-2">Change Password</button>
+    </form>
+</div>

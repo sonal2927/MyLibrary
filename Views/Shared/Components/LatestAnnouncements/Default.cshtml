@@ -1,0 +1,28 @@
+@model List<LibraryManagementSystem.Models.Announcement>
+
+@if (Model.Any())
+{
+    <div class="card shadow-sm mb-3">
+        <div class="card-header bg-primary text-white fw-bold">
+            📢 Latest Announcements
+        </div>
+        <div class="card-body p-2">
+            <ul class="list-group list-group-flush">
+                @foreach (var a in Model)
+                {
+                    <li class="list-group-item">
+                        <strong>@a.Title</strong>
+                        <p class="text-muted small mb-1">@a.Message</p>
+                        <small class="text-secondary">
+                            <i class="fas fa-clock"></i> @a.CreatedAt.ToString("dd MMM yyyy")
+                        </small>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <p class="text-muted">No announcements yet.</p>
+}

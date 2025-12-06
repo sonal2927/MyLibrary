@@ -1,0 +1,54 @@
+@model LibraryManagementSystem.Models.BookRequest
+@{
+    ViewData["Title"] = "Request a Book";
+    var categories = new List<string> { "CS", "Science", "Literature", "Commerce", "Math", "Others" };
+}
+
+<div class="container mt-4">
+    <h2>📩 Request a Book</h2>
+
+    <div class="alert alert-info">
+        Use this form to request a book you want to borrow or suggest to the library.
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <form asp-action="Request" method="post" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">📘 Book Title</label>
+            <input asp-for="Title" class="form-control" required />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">✍️ Author</label>
+            <input asp-for="Author" class="form-control" required />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">🏢 Publisher</label>
+            <input asp-for="Publisher" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">📅 Published Year</label>
+            <input asp-for="PublishedYear" class="form-control" type="number" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">📂 Category</label>
+            <select asp-for="Category" class="form-select" required>
+                <option value="">-- Select --</option>
+                @foreach (var cat in categories)
+                {
+                    <option value="@cat">@cat</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-12">
+            <label class="form-label">🗒️ Reason / Message</label>
+            <textarea asp-for="Message" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary">📨 Submit Request</button>
+        </div>
+    </form>
+</div>

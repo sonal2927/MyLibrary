@@ -1,0 +1,74 @@
+@model List<LibraryManagementSystem.Models.BookRecord>
+@using LibraryManagementSystem.Models
+
+@{
+    ViewData["Title"] = "Reading History";
+}
+
+<h2 class="mb-4 text-primary">📖 My Reading History</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        You haven’t borrowed any books yet.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Sr.</th>
+                <th>Book Title</th>
+                <th>Author</th>
+                <th>Issue Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var record = Model[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@record.Book?.Title</td>
+                    <td>@record.Book?.Author</td>
+                    <td>@record.IssuedAt?.ToString("dd-MMM-yy")</td>
+                    <td>@record.ReturnedAt?.ToString("dd-MMM-yy")</td>
+                    <td>
+                        @if (record.ReturnedAt != null)
+                        {
+                            <span class="text-success">✅ Returned</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger">❌ Not Returned</span>
+                        }
+                    </td>
+                    <td>
+                        @if (record.Rating.HasValue)
+                        {
+                            for (int star = 1; star <= 5; star++)
+                            {
+                                if (star <= record.Rating)
+                                {
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-star text-muted"></i>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">Not Rated</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

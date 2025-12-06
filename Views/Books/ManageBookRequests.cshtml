@@ -1,0 +1,177 @@
+@model List<LibraryManagementSystem.Models.BookRecord>
+@{
+    ViewData["Title"] = "Manage Book Requests";
+
+    var pending = Model.Where(r => r.Status.ToString() == "Pending").ToList();
+    var returnReq = Model.Where(r => r.Status.ToString() == "ReturnRequested").ToList();
+    var renewalReq = Model.Where(r => r.Status.ToString() == "RenewalRequested").ToList();
+
+    string GetApproveButtonText(string status) => status switch
+    {
+        "ReturnRequested" => "<i class='bi bi-arrow-return-left'></i> Accept Return",
+        "RenewalRequested" => "<i class='bi bi-arrow-repeat'></i> Approve Renewal",
+        _ => "<i class='bi bi-check2-circle'></i> Approve"
+    };
+
+    string GetApproveButtonClass(string status) => status switch
+    {
+        "ReturnRequested" => "btn btn-primary btn-sm rounded-pill",
+        "RenewalRequested" => "btn btn-primary btn-sm rounded-pill",
+        _ => "btn btn-success btn-sm rounded-pill"
+    };
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4"><i class="bi bi-inbox-fill"></i> Manage Book Requests</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">📭 No pending requests.</div>
+    }
+    else
+    {
+        <!-- ✅ Pending Requests -->
+        @if (pending.Any())
+        {
+            <h4 class="text-warning mb-3"><i class="bi bi-hourglass-split"></i> Pending Requests</h4>
+            <table class="table table-hover table-bordered align-middle mb-5 shadow-sm rounded">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th>Book</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Request Date</th>
+                        <th style="width:180px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < pending.Count; i++)
+                    {
+                        var r = pending[i];
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td><strong>@r.Book?.Title</strong></td>
+                            <td>
+                                @r.User?.FullName
+                                <br /><small class="text-muted">(@r.LoginId)</small>
+                            </td>
+                            <td><span class="badge bg-secondary">@r.User?.Role</span></td>
+                            <td>@r.RequestedAt?.ToString("dd MMM yyyy hh:mm tt")</td>
+                            <td>
+                                <form asp-action="ApproveRequest" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@r.Id" />
+                                    <button class="@GetApproveButtonClass(r.Status.ToString())" type="submit">
+                                        @Html.Raw(GetApproveButtonText(r.Status.ToString()))
+                                    </button>
+                                </form>
+                                <form asp-action="RejectRequest" method="post" class="d-inline ms-2">
+                                    <input type="hidden" name="id" value="@r.Id" />
+                                    <button class="btn btn-danger btn-sm rounded-pill">
+                                        <i class="bi bi-x-circle"></i> Reject
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        <!-- ✅ Return Requests -->
+        @if (returnReq.Any())
+        {
+            <h4 class="text-info mb-3"><i class="bi bi-arrow-return-left"></i> Return Requests</h4>
+            <table class="table table-hover table-bordered align-middle mb-5 shadow-sm rounded">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th>Book</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Request Date</th>
+                        <th style="width:180px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < returnReq.Count; i++)
+                    {
+                        var r = returnReq[i];
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td><strong>@r.Book?.Title</strong></td>
+                            <td>
+                                @r.User?.FullName
+                                <br /><small class="text-muted">(@r.LoginId)</small>
+                            </td>
+                            <td><span class="badge bg-secondary">@r.User?.Role</span></td>
+                            <td>@r.RequestedAt?.ToString("dd MMM yyyy hh:mm tt")</td>
+                            <td>
+                                <form asp-action="ApproveRequest" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@r.Id" />
+                                    <button class="@GetApproveButtonClass(r.Status.ToString())" type="submit">
+                                        @Html.Raw(GetApproveButtonText(r.Status.ToString()))
+                                    </button>
+                                </form>
+                                <form asp-action="RejectRequest" method="post" class="d-inline ms-2">
+                                    <input type="hidden" name="id" value="@r.Id" />
+                                    <button class="btn btn-danger btn-sm rounded-pill">
+                                        <i class="bi bi-x-circle"></i> Reject
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        <!-- ✅ Renewal Requests -->
+        @if (renewalReq.Any())
+        {
+            <h4 class="text-primary mb-3"><i class="bi bi-arrow-repeat"></i> Renewal Requests</h4>
+            <table class="table table-hover table-bordered align-middle shadow-sm rounded">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th>Book</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Request Date</th>
+                        <th style="width:180px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < renewalReq.Count; i++)
+                    {
+                        var r = renewalReq[i];
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td><strong>@r.Book?.Title</strong></td>
+                            <td>
+                                @r.User?.FullName
+                                <br /><small class="text-muted">(@r.LoginId)</small>
+                            </td>
+                            <td><span class="badge bg-secondary">@r.User?.Role</span></td>
+                            <td>@r.RequestedAt?.ToString("dd MMM yyyy hh:mm tt")</td>
+                            <td>
+                                <form asp-action="ApproveRequest" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@r.Id" />
+                                    <button class="@GetApproveButtonClass(r.Status.ToString())" type="submit">
+                                        @Html.Raw(GetApproveButtonText(r.Status.ToString()))
+                                    </button>
+                                </form>
+                                <form asp-action="RejectRequest" method="post" class="d-inline ms-2">
+                                    <input type="hidden" name="id" value="@r.Id" />
+                                    <button class="btn btn-danger btn-sm rounded-pill">
+                                        <i class="bi bi-x-circle"></i> Reject
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+</div>

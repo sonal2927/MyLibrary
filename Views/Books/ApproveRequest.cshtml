@@ -1,0 +1,46 @@
+@model List<LibraryManagementSystem.Models.BookRecord>
+@{
+    ViewData["Title"] = "Manage Book Requests";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-3 text-primary">📥 Book Requests</h3>
+
+    @if (!Model.Any())
+    {
+        <p>No pending requests at the moment.</p>
+    }
+    else
+    {
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>User</th>
+                    <th>Book</th>
+                    <th>Request Type</th>
+                    <th>Requested At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>@r.User.FullName (@r.User.LoginId)</td>
+                        <td>@r.Book.Title</td>
+                        <td>@r.Status</td>
+                        <td>@r.RequestedAt?.ToString("g")</td>
+                        <td>
+                            <form method="post" asp-action="ApproveRequest" asp-route-id="@r.Id" style="display:inline">
+                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                            </form>
+                            <form method="post" asp-action="RejectRequest" asp-route-id="@r.Id" style="display:inline">
+                                <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

@@ -1,0 +1,223 @@
+@model LibraryManagementSystem.Models.ViewModels.LibrarianReportViewModel
+@{
+    ViewData["Title"] = "Librarian Dashboard";
+}
+
+<style>
+    /* ✅ Hover & Lift Effect */
+    .dashboard-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        filter: brightness(1.1); /* ✅ Slightly brighter gradient on hover */
+    }
+
+    /* ✅ Ripple Effect */
+    .dashboard-card::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.4s ease, height 0.4s ease, opacity 0.8s ease;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .dashboard-card:active::after {
+        width: 200%;
+        height: 200%;
+        opacity: 0;
+        transition: 0s;
+    }
+</style>
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center text-primary fw-bold">
+        <i class="fas fa-book-reader"></i> Librarian Dashboard
+    </h2>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 text-center">
+
+        <!-- ✅ Total Books -->
+        <div class="col-md-3">
+            <a href="/Books/BrowseBooks" class="text-decoration-none">
+                <div class="card dashboard-card shadow border-0 rounded-3"
+                     style="background: linear-gradient(45deg, #4c6ef5, #5c7cfa); color: white; cursor:pointer;">
+                    <div class="card-body">
+                        <i class="fas fa-book fa-2x mb-2"></i>
+                        <h6>Total Books</h6>
+                        <p class="display-6 fw-bold counter" data-target="@Model.TotalBooks">0</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- ✅ Issued Books -->
+        <div class="col-md-3">
+            <a href="/Books/IssuedBooksReport" class="text-decoration-none">
+                <div class="card dashboard-card shadow border-0 rounded-3"
+                     style="background: linear-gradient(45deg, #51cf66, #69db7c); color: white; cursor:pointer;">
+                    <div class="card-body">
+                        <i class="fas fa-book-open fa-2x mb-2"></i>
+                        <h6>Issued Books</h6>
+                        <p class="display-6 fw-bold counter" data-target="@Model.TotalIssued">0</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- ✅ Pending Requests -->
+        <div class="col-md-3">
+            <a href="/Books/ManageBookRequests" class="text-decoration-none">
+                <div class="card dashboard-card shadow border-0 rounded-3"
+                     style="background: linear-gradient(45deg, #fcc419, #ffd43b); color: black; cursor:pointer;">
+                    <div class="card-body">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
+                        <h6>Pending Requests</h6>
+                        <p class="display-6 fw-bold counter" data-target="@Model.PendingRequests">0</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- ✅ Total Users -->
+        <div class="col-md-3">
+            <a href="/Account/UserInfo" class="text-decoration-none">
+                <div class="card dashboard-card shadow border-0 rounded-3"
+                     style="background: linear-gradient(45deg, #339af0, #74c0fc); color: white; cursor:pointer;">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <h6>Total Users</h6>
+                        <p class="display-6 fw-bold counter" data-target="@Model.TotalUsers">0</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="card shadow border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center fw-bold">
+                    👥 User Breakdown
+                </div>
+                <div class="card-body">
+                    <canvas id="userPieChart" style="max-height:250px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow border-0 rounded-3">
+                <div class="card-header bg-success text-white text-center fw-bold">
+                    📊 Book Requests Overview
+                </div>
+                <div class="card-body">
+                    <canvas id="booksBarChart" style="max-height:250px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Most Issued Books Table -->
+    <h4 class="mt-5 text-primary fw-bold">
+        <i class="fas fa-star"></i> Most Issued Books
+    </h4>
+    @if (Model.MostIssuedBooks.Any())
+    {
+        <div class="table-responsive mt-3">
+            <table class="table table-hover table-striped shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Book Name</th>
+                        <th>Times Issued</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.MostIssuedBooks.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td><i class="fas fa-book text-primary"></i> @Model.MostIssuedBooks[i].BookName</td>
+                            <td><span class="badge bg-success">@Model.MostIssuedBooks[i].IssueCount</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted mt-3">No book issue data found.</p>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // ✅ Count-Up Animation
+        document.querySelectorAll(".counter").forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute("data-target");
+                const current = +counter.innerText;
+                const increment = target / 40;
+                if (current < target) {
+                    counter.innerText = Math.ceil(current + increment);
+                    setTimeout(updateCount, 40);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            updateCount();
+        });
+
+        // ✅ Pie Chart (User Breakdown)
+        new Chart(document.getElementById("userPieChart"), {
+            type: "pie",
+            data: {
+                labels: ["Students", "Faculty", "Librarians"],
+                datasets: [{
+                    data: [@Model.TotalStudents, @Model.TotalFaculty, @Model.TotalLibrarians],
+                    backgroundColor: ["#4c6ef5", "#51cf66", "#fcc419"],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        // ✅ Bar Chart (Books Overview)
+        new Chart(document.getElementById("booksBarChart"), {
+            type: "bar",
+            data: {
+                labels: ["Issued", "Pending", "Submitted"],
+                datasets: [{
+                    label: "Books",
+                    data: [@Model.TotalIssued, @Model.PendingRequests, @Model.TotalSubmitted],
+                    backgroundColor: ["#51cf66", "#fcc419", "#339af0"],
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+}

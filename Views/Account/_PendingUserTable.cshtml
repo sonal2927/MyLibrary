@@ -1,0 +1,59 @@
+@model List<LibraryManagementSystem.Models.User>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-light border text-muted">No pending users in this category.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped mt-2">
+        <thead class="table-light">
+            <tr>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Department</th>
+                <th>Registered At</th>
+                <th>Approved At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.FullName</td>
+                    <td>@user.Email</td>
+                    <td>@user.Phone</td>
+                    <td>@user.Department</td>
+                    <td>@user.RegisteredAt.ToString("dd MMM yyyy hh:mm tt")</td>
+                    <td>
+                        @if (user.ApprovedAt != null)
+                        {
+                            <span class="text-success">@user.ApprovedAt?.ToString("dd MMM yyyy hh:mm tt")</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <form asp-action="ApproveUser" method="post">
+                                <input type="hidden" name="id" value="@user.Id" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-success">✅ Approve</button>
+                            </form>
+
+                            <form asp-action="DeleteUserRequest" method="post">
+                                <input type="hidden" name="id" value="@user.Id" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

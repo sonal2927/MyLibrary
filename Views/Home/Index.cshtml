@@ -1,0 +1,196 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        body.dark-mode {
+            background-color: #1e1e2f;
+            color: #f1f1f1;
+        }
+
+        .hero {
+            background: linear-gradient(to right, rgba(106, 17, 203, 0.8), rgba(37, 117, 252, 0.8)), 
+                        url('/images/library-hero.jpg') center/cover no-repeat;
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-weight: 700;
+            font-size: 3rem;
+        }
+
+        .announcement-bar {
+            background-color: #ffc107;
+            color: #1f1f1f;
+            font-weight: 500;
+        }
+
+        .stat-box {
+            border-radius: 15px;
+            padding: 30px 15px;
+            background-color: #f8f9fa;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-box:hover {
+            background-color: #e9ecef;
+        }
+
+        .nav-card {
+            border-radius: 12px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+        }
+
+        .nav-card h4 {
+            font-weight: 600;
+        }
+
+        #darkModeToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+    </style>
+}
+
+<!-- 🌙 Dark Mode Toggle -->
+<button id="darkModeToggle" class="btn btn-sm btn-outline-light bg-dark">
+    <i id="themeIcon" class="fa fa-moon"></i>
+</button>
+
+<div class="container-fluid px-0">
+
+    <!-- 🟦 Hero Banner -->
+    <section class="hero mb-5">
+        <div class="container">
+            <h1 class="display-4">Welcome to SVMIT College Digital Library 📚</h1>
+            <p class="lead">Access thousands of books, journals, and learning resources — anytime, anywhere.</p>
+        </div>
+    </section>
+
+    <!-- 📢 Announcements -->
+    <section class="announcement-bar py-3 text-center">
+        <strong>📢 Announcement:</strong> Library will remain closed on <b>10th July</b> due to Book Fair. Check updated timings on the notice board.
+    </section>
+
+    <!-- 📘 About Section -->
+    <section class="container my-5">
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <h3>📖 About the Library</h3>
+                <p>Our library supports students and faculty with a rich collection of resources across all departments.</p>
+            </div>
+            <div class="col-md-4">
+                <h3>🎓 Who Can Access</h3>
+                <p>Students, Faculty, and Staff of SVMIT College can explore, request, and issue books through this platform.</p>
+            </div>
+            <div class="col-md-4">
+                <h3>✨ Key Features</h3>
+                <p>Online Book Search, Issue Tracking, Request Management, Notifications, and more.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 📊 Stats Section -->
+    <section class="bg-light py-5">
+        <div class="container text-center">
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="stat-box">
+                        <h2>📚 5,000+</h2>
+                        <p>Total Books</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-box">
+                        <h2>👩‍🎓 1,200+</h2>
+                        <p>Registered Users</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-box">
+                        <h2>📂 15+</h2>
+                        <p>Categories</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-box">
+                        <h2>🕐 9 AM – 5 PM</h2>
+                        <p>Library Timings</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 🧭 Navigation Cards -->
+    <section class="container my-5">
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <div class="card nav-card shadow h-100">
+                    <div class="card-body">
+                        <h4>🔍 Explore Books</h4>
+                        <p>Browse books by category and availability.</p>
+                        <a href="@Url.Action("Index", "Books")" class="btn btn-primary">Go to Books</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card nav-card shadow h-100">
+                    <div class="card-body">
+                        <h4>🔐 Login</h4>
+                        <p>Login as Student, Faculty, Librarian or Admin.</p>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-success">Login Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card nav-card shadow h-100">
+                    <div class="card-body">
+                        <h4>📞 Contact Helpdesk</h4>
+                        <p>Have a question? Reach out to us for support.</p>
+                        <a href="@Url.Action("Contact", "Home")" class="btn btn-info">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const toggleBtn = document.getElementById('darkModeToggle');
+        const icon = document.getElementById('themeIcon');
+
+        function applyDarkMode(enable) {
+            document.body.classList.toggle('dark-mode', enable);
+            icon.className = enable ? 'fa fa-sun' : 'fa fa-moon';
+            localStorage.setItem('darkMode', enable);
+        }
+
+        toggleBtn?.addEventListener('click', () => {
+            const isDark = document.body.classList.contains('dark-mode');
+            applyDarkMode(!isDark);
+        });
+
+        // Initialize
+        const prefersDark = localStorage.getItem('darkMode') === 'true';
+        applyDarkMode(prefersDark);
+    </script>
+}

@@ -1,0 +1,81 @@
+@model List<LibraryManagementSystem.Models.RenewalRequest>
+
+@{
+    ViewData["Title"] = "Renewal Requests";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary"><i class="bi bi-arrow-repeat"></i> Renewal Requests</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    else if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Student</th>
+                    <th>Book Title</th>
+                    <th>Days Requested</th>
+                    <th>Requested On</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in Model)
+                {
+                    <tr>
+                        <td>@request.BookRecord?.User?.FullName</td>
+                        <td>@request.BookRecord?.Book?.Title</td>
+                        <td>@request.RequestedDays</td>
+                        <td>@request.RequestedAt.ToString("dd-MM-yyyy")</td>
+
+                        <td>
+                            @if (request.IsApproved == null)
+                            {
+                                <span class="badge bg-warning">Pending</span>
+                            }
+                            else if (request.IsApproved == true)
+                            {
+                                <span class="badge bg-success">Approved</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Rejected</span>
+                            }
+                        </td>
+                        <td>
+                            @if (request.IsApproved == null)
+                            {
+                                <form asp-action="ApproveRenewal" asp-route-id="@request.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-success btn-sm">✅ Approve</button>
+                                </form>
+                                <form asp-action="RejectRenewal" asp-route-id="@request.Id" method="post" class="d-inline ms-2">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-danger btn-sm">❌ Reject</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No actions</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">No pending renewal requests.</div>
+    }
+</div>

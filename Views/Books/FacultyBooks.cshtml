@@ -1,0 +1,62 @@
+@model List<LibraryManagementSystem.Models.Book>
+@{
+    ViewData["Title"] = "Faculty - Browse Books";
+    var selectedCategory = ViewBag.SelectedCategory as string ?? "All";
+    var searchQuery = ViewBag.SearchQuery as string ?? "";
+}
+
+<h2 class="mb-4 text-primary">📚 Faculty - Browse and Request Books</h2>
+
+<form asp-action="FacultyBooks" method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="search" value="@searchQuery" placeholder="🔍 Search by title or author" class="form-control" />
+    </div>
+    <div class="col-md-4">
+        <select name="category" class="form-select">
+            <option value="">All Departments</option>
+            <option value="CSE" selected="@(selectedCategory == "CSE")">CSE</option>
+            <option value="IT" selected="@(selectedCategory == "IT")">IT</option>
+            <option value="Mechanical" selected="@(selectedCategory == "Mechanical")">Mechanical</option>
+            <option value="Civil" selected="@(selectedCategory == "Civil")">Civil</option>
+            <option value="Chemical" selected="@(selectedCategory == "Chemical")">Chemical</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No books found for your search or department.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var book in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="~/images/books/@(book.ImageList?.FirstOrDefault() ?? "default.jpg")" class="card-img-top" style="height: 200px; object-fit: cover;" alt="@book.Title" />
+                    <div class="card-body">
+                        <h5 class="card-title">@book.Title</h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> @book.Author<br />
+                            <strong>Department:</strong> @book.Department
+                        </p>
+                        @if (book.IsAvailable)
+                        {
+                            <form asp-action="RequestBook" asp-route-id="@book.Id" method="post">
+                                <button type="submit" class="btn btn-sm btn-primary">📥 Request Book</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Not Available</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

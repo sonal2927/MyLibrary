@@ -1,0 +1,62 @@
+@{
+    ViewData["Title"] = "Delete Book";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-danger text-white text-center fs-5 fw-bold rounded-top-4">
+            <i class="bi bi-trash-fill"></i> Delete Book
+        </div>
+
+        <div class="card-body p-4">
+            <p class="text-muted">
+                <i class="bi bi-exclamation-triangle text-warning"></i>
+                <strong>Warning:</strong> Deleting a book is a permanent action and cannot be undone.
+            </p>
+
+            <form asp-action="Delete" method="post" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="BookId" class="form-label fw-bold">Enter Book ID</label>
+                    <input type="text" class="form-control shadow-sm" id="BookId" name="BookId" placeholder="Enter the Book ID to delete" required />
+                    <div class="invalid-feedback">Please enter a valid Book ID.</div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                        <i class="bi bi-arrow-left"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-danger shadow-sm">
+                        <i class="bi bi-trash"></i> Delete Book
+                    </button>
+                </div>
+            </form>
+
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-info mt-3 shadow-sm">
+                    @ViewBag.Message
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // ✅ Bootstrap Form Validation
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+}

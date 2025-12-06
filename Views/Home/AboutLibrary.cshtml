@@ -1,0 +1,116 @@
+@{
+    ViewData["Title"] = "About Library";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <!-- ✅ Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <style>
+        .about-hero {
+            background: linear-gradient(to right, rgba(106, 17, 203, 0.85), rgba(37, 117, 252, 0.85)),
+                        url('@Url.Content("~/images/library-banner.jpg")') center/cover no-repeat;
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .about-hero h1 {
+            font-weight: 700;
+        }
+
+        .about-section {
+            padding: 60px 20px;
+        }
+
+        .info-box {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .info-box:hover {
+            transform: translateY(-6px);
+        }
+
+        .info-box h4 {
+            color: #2563eb;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .info-box ul {
+            padding-left: 20px;
+        }
+
+        .info-box ul li {
+            margin-bottom: 10px;
+        }
+
+        .icon {
+            font-size: 1.4rem;
+            margin-right: 10px;
+            color: #2563eb;
+        }
+
+        /* ✅ Razor-safe media query */
+        @@media (max-width: 768px) {
+            .about-hero h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+}
+
+<!-- ✅ Hero Section -->
+<div class="about-hero">
+    <div class="container">
+        <h1 class="display-5 fw-bold">📚 About SVMIT College Library</h1>
+        <p class="lead mt-2">Empowering students and faculty with knowledge and resources</p>
+    </div>
+</div>
+
+<!-- ✅ Info Section -->
+<div class="about-section container">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Mission -->
+            <div class="info-box">
+                <h4><i class="icon bi bi-bullseye"></i> Our Mission</h4>
+                <p>To provide seamless access to books, journals, digital content, and academic resources — enhancing learning and research for all.</p>
+            </div>
+
+            <!-- Access Info -->
+            <div class="info-box">
+                <h4><i class="icon bi bi-person-check-fill"></i> Who Can Use</h4>
+                <p>All registered students, faculty, staff, and administrators of SVMIT can explore, issue, and request books from our platform.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Services -->
+            <div class="info-box">
+                <h4><i class="icon bi bi-gear-fill"></i> Services Offered</h4>
+                <ul>
+                    <li>🔍 Online Book Search & Request</li>
+                    <li>📚 Book Issuing & Returning</li>
+                    <li>📖 Reading History Tracking</li>
+                    <li>📬 Request New Books</li>
+                    <li>🛠 Admin & Librarian Panel</li>
+                </ul>
+            </div>
+
+            <!-- Hours -->
+            <div class="info-box">
+                <h4><i class="icon bi bi-clock-history"></i> Library Hours</h4>
+                <p><strong>Monday – Friday:</strong><br />8:30 AM – 4:00 PM</p>
+                <p><strong>Saturday:</strong><br />8:30 AM – 1:00 PM</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,79 @@
+@model List<LibraryManagementSystem.Models.User>
+@{
+    ViewData["Title"] = "User Info";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var selectedRole = ViewBag.SelectedRole?.ToString() ?? "All";
+    var searchQuery = ViewBag.SearchQuery?.ToString() ?? "";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">📋 User Information</h2>
+
+    <!-- ✅ Success message -->
+    @* @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center">
+            @TempData["Success"]
+        </div>
+    } *@
+
+    <!-- 🔍 Filter & Search Form -->
+    <form method="get" asp-action="UserInfo" class="row justify-content-center mb-4">
+        <div class="col-md-3">
+            <select name="role" class="form-select" onchange="this.form.submit()">
+                <option value="All" selected="@(selectedRole == "All")">All</option>
+                <option value="Student" selected="@(selectedRole == "Student")">Student</option>
+                <option value="Faculty" selected="@(selectedRole == "Faculty")">Faculty</option>
+                <option value="Librarian" selected="@(selectedRole == "Librarian")">Librarian</option>
+            </select>
+        </div>
+        <div class="col-md-5">
+            <input type="text" name="search" value="@searchQuery" class="form-control" placeholder="Search by name, email or ID" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </form>
+
+    <!-- 👥 User Table -->
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Login ID</th>
+                <th>Role</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Gender</th>
+                <th>Department</th>
+                <th style="width: 100px;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@(user.LoginId ?? "N/A")</td>
+                    <td>@(user.Role ?? "N/A")</td>
+                    <td>
+                  <a asp-action="EditUser"
+                 asp-controller="Account"
+                asp-route-id="@user.LoginId">
+                 @(user.LoginId ?? "N/A")
+                </a>
+               </td>
+                    <td>@(user.Email ?? "N/A")</td>
+                    <td>@(user.Phone ?? "N/A")</td>
+                    <td>@(user.Gender ?? "N/A")</td>
+                    <td>@(user.Department ?? "N/A")</td>
+                    <td>
+                        <form asp-action="SoftDeleteUser" asp-controller="Account" method="post" asp-route-id="@user.Id" onsubmit="return confirm('Are you sure you want to remove this user?');">
+                            <button type="submit" class="btn btn-sm btn-danger">❌</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,160 @@
+@model IEnumerable<LibraryManagementSystem.Models.Book>
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Explore Library Books";
+    var role = Context.Session.GetString("UserRole");
+    var selectedCategory = Context.Request.Query["category"];
+    var searchQuery = Context.Request.Query["search"];
+    var categories = ViewBag.Categories as List<string> ?? new List<string>();
+}
+
+<div class="container mt-4">
+
+    <!-- 🔝 Heading + Add Book Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+        <div>
+            <h2 class="fw-bold text-primary mb-0">
+                📚 Explore <span class="text-dark">Library Books</span>
+            </h2>
+            <p class="text-muted mb-0">Find books by category, author, or title</p>
+        </div>
+
+        @if (role == "Librarian")
+        {
+            <a asp-action="Create" asp-controller="Books" class="btn btn-success shadow-sm mt-2 mt-md-0">
+                <i class="bi bi-plus-circle"></i> Add New Book
+            </a>
+        }
+    </div>
+
+    <!-- ✅ Toast Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success shadow-sm rounded-3">
+            ✅ @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger shadow-sm rounded-3">
+            ❌ @TempData["Error"]
+        </div>
+    }
+
+    <!-- 🔍 Search & Filter -->
+    <form asp-action="BrowseBooks" method="get" class="row g-3 mb-4 align-items-end bg-light p-3 rounded-3 shadow-sm">
+        <div class="col-md-3">
+            <label class="form-label fw-bold text-secondary">Category</label>
+            <select class="form-select shadow-sm" name="category">
+                <option value="">All Categories</option>
+                @foreach (var cat in categories)
+                {
+                    <option value="@cat" selected="@(cat == selectedCategory)">
+                        @cat
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-bold text-secondary">Search</label>
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" value="@searchQuery" class="form-control" placeholder="Search by Title or Author" />
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </form>
+
+    <!-- 📚 Book Cards -->
+    <div class="row">
+        @if (!Model.Any())
+        {
+            <div class="col-12 text-center">
+                <div class="alert alert-info shadow-sm rounded-3">
+                    📭 No books found. Try changing filters or search keywords.
+                </div>
+            </div>
+        }
+        else
+        {
+            @foreach (var book in Model)
+            {
+                var imagePath = book.ImageList?.FirstOrDefault() ?? "/images/books/default-book.png";
+
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-lg rounded-4 border-0 book-card">
+                        <img src="@imagePath"
+                             onerror="this.onerror=null; this.src='/images/books/default-book.png';"
+                             class="card-img-top rounded-top-4"
+                             alt="@book.Title"
+                             style="height: 230px; object-fit: cover;" />
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold text-primary">@book.Title</h5>
+                            <p class="card-text text-muted mb-1">
+                                <i class="bi bi-person"></i> <strong>Author:</strong> @book.Author
+                            </p>
+                            <p class="card-text mb-1">
+                                <i class="bi bi-tags"></i> <strong>Category:</strong> @book.Department
+                            </p>
+                            <p class="card-text">
+                                <i class="bi bi-check-circle"></i> <strong>Status:</strong>
+                                @if (book.IsAvailable)
+                                {
+                                    <span class="badge bg-success">Available</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Issued</span>
+                                }
+                            </p>
+
+                            <!-- Buttons -->
+                            <div class="mt-auto d-grid gap-2">
+                                <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@book.Id">👁 View Details</a>
+
+                                @if (role == "Student" || role == "Faculty")
+                                {
+                                    @if (book.IsAvailable)
+                                    {
+                                        <form asp-action="IssueBookForm" asp-route-id="@book.Id" method="get">
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                📖 Issue Book
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-secondary btn-sm" disabled>
+                                            ❌ Not Available
+                                        </button>
+                                    }
+                                }
+
+                                @if (role == "Librarian")
+                                {
+                                    <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@book.Id">🗑 Delete</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<style>
+    .book-card:hover {
+        transform: translateY(-4px);
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+</style>

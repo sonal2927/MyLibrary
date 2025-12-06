@@ -1,0 +1,107 @@
+@model LibraryManagementSystem.Models.Book
+
+@{
+    ViewData["Title"] = "Issue Book";
+}
+
+<div class="container my-5">
+
+    <!-- ✅ Toast Message -->
+    @if (TempData["ToastMessage"] != null)
+    {
+        <div class="alert alert-@TempData["ToastType"] alert-dismissible fade show" role="alert">
+            @TempData["ToastMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- ✅ Title -->
+    <h2 class="text-center text-primary fw-bold mb-4">
+        <i class="bi bi-journal-plus"></i> Issue Book Request
+    </h2>
+
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <div class="row">
+                <!-- ✅ Book Image -->
+                <div class="col-md-4 text-center">
+                    <img src="@Url.Content(Model.ImagePath)"
+                        onerror="this.onerror=null; this.src='/images/books/default-book.png';"
+                        class="img-fluid rounded shadow-sm"
+                        alt="@Model.Title"
+                        style="height: 260px; object-fit: cover;" />
+
+                    <p class="mt-3 fw-bold text-secondary">
+                        <i class="bi bi-tags"></i> @Model.Department
+                    </p>
+                </div>
+
+
+                <!-- ✅ Book Details & Request Form -->
+                <div class="col-md-8">
+                    <h4 class="fw-bold text-dark">@Model.Title</h4>
+                    <p class="text-muted mb-1"><i class="bi bi-person"></i> Author: <strong>@Model.Author</strong></p>
+                    <p class="text-muted mb-1"><i class="bi bi-layers"></i> Available Copies: <strong>@Model.Quantity</strong></p>
+                    <p class="mb-3">
+                        <i class="bi bi-check-circle"></i> Status:
+                        @if (Model.IsAvailable)
+                        {
+                            <span class="badge bg-success">Available</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Issued</span>
+                        }
+                    </p>
+
+                    <hr />
+
+                    <!-- ✅ Request Form -->
+                    <form asp-action="RequestBook" asp-controller="Books" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="daysNeeded" class="form-label fw-bold">📆 Days Needed</label>
+                                <input type="number" class="form-control shadow-sm" id="daysNeeded" name="daysNeeded" min="1" required />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="fromDate" class="form-label fw-bold">📅 From Date</label>
+                                <input type="date" class="form-control shadow-sm" id="fromDate" name="fromDate" required />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="toDate" class="form-label fw-bold">📅 To Date</label>
+                                <input type="date" class="form-control shadow-sm" id="toDate" name="toDate" required />
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success shadow-sm">
+                                <i class="bi bi-send-check"></i> Submit Request
+                            </button>
+                            <a href="@Url.Action("BrowseBooks")" class="btn btn-secondary ms-2 shadow-sm">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+}

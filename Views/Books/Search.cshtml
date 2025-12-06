@@ -1,0 +1,91 @@
+@model List<LibraryManagementSystem.Models.Book>
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Search Books";
+    var departments = new List<string> { "All", "CSE", "IT", "Mechanical", "Civil", "Chemical"};
+
+    var query = ViewContext.HttpContext.Request.Query;
+    var selectedTitle = query["title"].ToString();
+    var selectedAuthor = query["author"].ToString();
+    var selectedDepartment = query["category"].ToString(); // Still named "category" in the query
+}
+
+<div class="container my-4">
+    <h2 class="text-primary mb-4">🔍 Search Books in Library</h2>
+
+    <!-- Search Form -->
+    <form method="get" asp-action="Search" asp-controller="Books" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <input type="text" name="title" value="@selectedTitle" class="form-control" placeholder="Book Title" />
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="author" value="@selectedAuthor" class="form-control" placeholder="Author Name" />
+        </div>
+        <div class="col-md-3">
+            <select name="category" class="form-select">
+                <option value="">All Departments</option>
+                @foreach (var dept in departments)
+                {
+                    <option value="@dept" selected="@(selectedDepartment == dept ? "selected" : null)">
+                        @dept
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">🔍 Search</button>
+        </div>
+        <div class="col-md-3">
+            <a href="/Books/Search" class="btn btn-outline-secondary w-100">❌ Clear</a>
+        </div>
+    </form>
+
+    <!-- Search Results -->
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">🔍 Please enter search details above to find books.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover shadow-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Department</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var book = Model[i];
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@book.Title</td>
+                        <td>@book.Author</td>
+                        <td>@book.Department</td>
+                        <td>
+                            @if (book.IsAvailable)
+                            {
+                                <span class="badge bg-success">Available</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Issued</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-controller="Books" asp-route-id="@book.Id" class="btn btn-sm btn-outline-info">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

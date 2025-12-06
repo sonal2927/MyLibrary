@@ -1,0 +1,123 @@
+@model List<LibraryManagementSystem.Models.BookRecord>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "My Issued Books";
+    var now = DateTime.Now;
+    var hasOverdue = Model.Any(b => b.DueAt.HasValue && b.DueAt.Value.Date < now.Date);
+    int sr = 1;
+    string role = HttpContextAccessor.HttpContext?.Session?.GetString("UserRole") ?? "";
+}
+
+<div class="container my-5">
+    <!-- ✅ Page Title -->
+    <h2 class="text-center text-primary fw-bold mb-4">
+        📚 @((role == "Faculty") ? "Books Issued to You (Faculty)" : "My Issued Books")
+    </h2>
+
+    <!-- ✅ Alerts -->
+    @if (hasOverdue)
+    {
+        <div class="alert alert-warning shadow-sm">
+            ⚠️ You have overdue books! Please return or request renewal immediately to avoid fines.
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center shadow-sm">
+            😐 You have no books issued currently.
+        </div>
+    }
+    else
+    {
+        <!-- ✅ Issued Books Table -->
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-0">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-primary">
+                        <tr class="text-center">
+                            <th>#</th>
+                            <th>Book</th>
+                            <th>Author</th>
+                            <th>Issued On</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var record in Model)
+                        {
+                            string statusText = "On Time";
+                            string statusColor = "success";
+
+                            if (record.DueAt.HasValue)
+                            {
+                                var daysLeft = (record.DueAt.Value.Date - now.Date).TotalDays;
+
+                                if (daysLeft < 0)
+                                {
+                                    statusText = "Overdue";
+                                    statusColor = "danger";
+                                }
+                                else if (daysLeft <= 2)
+                                {
+                                    statusText = "Due Soon";
+                                    statusColor = "warning";
+                                }
+                            }
+
+                            <tr class="align-middle text-center">
+                                <td>@(sr++)</td>
+                                <td class="text-start">
+                                    <strong>@record.Book?.Title</strong>
+                                </td>
+                                <td>@record.Book?.Author</td>
+                                <td>@record.IssuedAt?.ToString("dd MMM yyyy")</td>
+                                <td>@record.DueAt?.ToString("dd MMM yyyy")</td>
+                                <td>
+                                    <span class="badge bg-@statusColor px-3 py-2">
+                                        @statusText
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <form asp-action="RequestRenewal" asp-controller="Books" method="post">
+                                            <input type="hidden" name="recordId" value="@record.Id" />
+                                            <button class="btn btn-sm btn-outline-primary shadow-sm" type="submit">
+                                                🔁 Renew
+                                            </button>
+                                        </form>
+                                        <form asp-action="RequestReturn" asp-controller="Books" method="post">
+                                            <input type="hidden" name="recordId" value="@record.Id" />
+                                            <button class="btn btn-sm btn-outline-danger shadow-sm" type="submit">
+                                                ❌ Return
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .card {
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        .table-hover tbody tr:hover {
+            background-color: rgba(0,123,255,0.05);
+        }
+    </style>
+}

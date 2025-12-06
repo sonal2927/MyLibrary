@@ -1,0 +1,158 @@
+@model LibraryManagementSystem.Models.User
+@{
+    ViewData["Title"] = "My Profile";
+    var isEditMode = ViewBag.IsEditMode as bool? ?? false;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- ✅ LEFT PROFILE CARD -->
+        <div class="col-lg-4 col-md-5 mb-4">
+            <div class="card shadow-sm text-center p-3">
+                <div class="position-relative">
+                    <img src="@(string.IsNullOrEmpty(Model.ProfilePicturePath) 
+                            ? "/images/default-profile.png" 
+                            : Model.ProfilePicturePath)"
+                         class="rounded-circle border border-3 border-primary mb-3"
+                         style="width:160px;height:160px;object-fit:cover;" />
+                </div>
+                <h5 class="fw-bold text-primary mb-1">@Model.FullName</h5>
+                <p class="text-muted">@Model.Role</p>
+
+                <!-- ✅ Upload Picture -->
+                <form asp-action="UploadProfilePicture" asp-controller="Account" enctype="multipart/form-data" method="post" class="mb-2">
+                    <input type="file" name="ProfilePicture" class="form-control form-control-sm mb-2" />
+                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                        <i class="bi bi-upload"></i> Upload New Picture
+                    </button>
+                </form>
+
+                <!-- ✅ Remove Picture -->
+                <form asp-action="RemoveProfilePicture" asp-controller="Account" method="post">
+                    <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                        <i class="bi bi-trash"></i> Remove Picture
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ✅ RIGHT PROFILE DETAILS -->
+        <div class="col-lg-8 col-md-7">
+            <!-- ✅ PERSONAL INFO CARD -->
+            <div class="card shadow-sm p-4 mb-4">
+                <h5 class="fw-bold text-primary mb-3">
+                    <i class="bi bi-person-lines-fill"></i> Personal Information
+                </h5>
+                <form asp-action="UpdateProfile" asp-controller="Books" method="post">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold">Full Name</label>
+                            @if (isEditMode)
+                            { <input type="text" name="FullName" value="@Model.FullName" class="form-control" /> }
+                            else { <p class="form-control-plaintext">@Model.FullName</p> }
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Email</label>
+                            @if (isEditMode)
+                            { <input type="email" name="Email" value="@Model.Email" class="form-control" /> }
+                            else { <p class="form-control-plaintext">@Model.Email</p> }
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Phone</label>
+                            @if (isEditMode)
+                            { <input type="text" name="Phone" value="@Model.Phone" class="form-control" /> }
+                            else { <p class="form-control-plaintext">@Model.Phone</p> }
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Department</label>
+                            <p class="form-control-plaintext">@Model.Department</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Gender</label>
+                            <p class="form-control-plaintext">@Model.Gender</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Date of Birth</label>
+                            <p class="form-control-plaintext">
+                                @(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("dd MMM yyyy") : "Not Provided")
+                            </p>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.EnrollmentNumber))
+                        {
+                            <div class="col-md-6">
+                                <label class="fw-bold">Enrollment No.</label>
+                                <p class="form-control-plaintext">@Model.EnrollmentNumber</p>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Semester))
+                        {
+                            <div class="col-md-6">
+                                <label class="fw-bold">Semester</label>
+                                <p class="form-control-plaintext">@Model.Semester</p>
+                            </div>
+                        }
+                        <div class="col-12">
+                            <label class="fw-bold">Address</label>
+                            @if (isEditMode)
+                            { <textarea name="Address" class="form-control">@Model.Address</textarea> }
+                            else { <p class="form-control-plaintext">@Model.Address</p> }
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        @if (isEditMode)
+                        {
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check2-circle"></i> Save Changes
+                            </button>
+                            <a href="@Url.Action("MyProfile", "Books")" class="btn btn-secondary ms-2">Cancel</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("MyProfile", "Books", new { edit = true })" class="btn btn-warning">
+                                <i class="bi bi-pencil-square"></i> Edit Profile
+                            </a>
+                        }
+                    </div>
+                </form>
+            </div>
+
+            <!-- ✅ CHANGE PASSWORD CARD -->
+            <div class="card shadow-sm p-4">
+                <h5 class="fw-bold text-primary mb-3">
+                    <i class="bi bi-lock-fill"></i> Change Password
+                </h5>
+                <form asp-action="ChangePassword" asp-controller="Account" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label>Current Password</label>
+                            <input type="password" name="CurrentPassword" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>New Password</label>
+                            <input type="password" name="NewPassword" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>Confirm Password</label>
+                            <input type="password" name="ConfirmPassword" class="form-control" />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-warning mt-3">
+                        <i class="bi bi-key"></i> Update Password
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control-plaintext {
+        background: #f8f9fa;
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+    }
+</style>

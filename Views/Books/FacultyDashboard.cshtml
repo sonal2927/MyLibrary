@@ -1,0 +1,202 @@
+@model LibraryManagementSystem.Models.ViewModels.FacultyDashboardViewModel
+@using LibraryManagementSystem.Models
+@{
+    ViewData["Title"] = "Faculty Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var now = DateTime.Now;
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4">
+        <i class="fas fa-chalkboard-teacher"></i> Faculty Dashboard
+    </h2>
+
+    <!-- ✅ Feedback Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <!-- ✅ Quick Access -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <a href="@Url.Action("BrowseBooks", "Books")" class="btn btn-outline-primary w-100">📚 Browse Books</a>
+        </div>
+        <div class="col-md-4">
+            <a href="@Url.Action("IssuedBooks", "Books")" class="btn btn-outline-success w-100">📖 My Issued Books</a>
+        </div>
+    </div>
+
+    <!-- ✅ 📢 Latest Announcements (Ticker) -->
+    <div class="mt-4">
+        <h5 class="fw-bold">📢 Latest Announcements</h5>
+        <div class="ticker-wrap">
+            <div class="ticker">
+                @await Component.InvokeAsync("LatestAnnouncements")
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Issued Books with Progress Bars -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-light">
+            <strong>📘 Current Issued / Requested Books</strong>
+        </div>
+        <div class="card-body">
+            @if (Model.IssuedBooks != null && Model.IssuedBooks.Count > 0)
+            {
+                <table class="table table-bordered table-hover table-striped text-center align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Issued On</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var book in Model.IssuedBooks)
+                        {
+                            var totalDays = (book.DueAt.HasValue && book.IssuedAt.HasValue)
+                                ? (book.DueAt.Value - book.IssuedAt.Value).TotalDays
+                                : 0;
+                            var usedDays = (book.IssuedAt.HasValue)
+                                ? (now - book.IssuedAt.Value).TotalDays
+                                : 0;
+                            var progress = totalDays > 0 ? Math.Min(100, (usedDays / totalDays) * 100) : 0;
+                            var barClass = progress > 80 ? "bg-danger" :
+                                           progress > 60 ? "bg-warning" : "bg-success";
+
+                            <tr>
+                                <td>@book.Book?.Title</td>
+                                <td>@book.Book?.Author</td>
+                                <td>@book.IssuedAt?.ToString("dd MMM yyyy")</td>
+                                <td>@book.DueAt?.ToString("dd MMM yyyy")</td>
+                                <td><span class="badge bg-secondary">@book.Status</span></td>
+                                <td>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar @barClass" role="progressbar"
+                                             style="width:@progress%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-info mb-0">No issued or requested books found.</div>
+            }
+        </div>
+    </div>
+
+    <!-- ✅ Explore Library (Quick View Modal) -->
+    <div class="mt-5">
+        <h5 class="fw-bold">✨ Explore Library</h5>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+            @foreach (var book in Model.FeaturedBooks ?? new List<Book>())
+            {
+                var imagePath = book.ImageList?.FirstOrDefault() ?? "/images/books/default-book.png";
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm hover-card"
+                         data-bs-toggle="modal" data-bs-target="#quickViewModal"
+                         data-title="@book.Title" data-author="@book.Author" data-image="@imagePath">
+                        <img src="@imagePath"
+                             onerror="this.onerror=null; this.src='/images/books/default-book.png';"
+                             class="card-img-top"
+                             alt="@book.Title"
+                             style="height: 250px; object-fit: cover;" />
+                        <div class="card-body">
+                            <h5 class="card-title">@book.Title</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">@book.Author</h6>
+                            <p class="card-text">
+                                <strong>Status:</strong>
+                                @if (book.IsAvailable)
+                                {
+                                    <span class="badge bg-success">Available</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Not Available</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="text-end mt-3">
+            <a href="/Books/BrowseBooks" class="btn btn-outline-primary">🔎 View All Books</a>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ Quick View Modal -->
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quickViewModalLabel">Book Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" class="img-fluid rounded shadow mb-3" style="height:250px;object-fit:cover;" />
+                <h5 id="modalTitle"></h5>
+                <p id="modalAuthor" class="text-muted"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // ✅ Quick View Modal Logic
+    const quickViewModal = document.getElementById('quickViewModal');
+    quickViewModal.addEventListener('show.bs.modal', function (event) {
+        const card = event.relatedTarget;
+        document.getElementById('modalTitle').innerText = card.getAttribute('data-title');
+        document.getElementById('modalAuthor').innerText = "by " + card.getAttribute('data-author');
+        document.getElementById('modalImage').src = card.getAttribute('data-image');
+    });
+</script>
+
+<style>
+    /* ✅ FIXED: Use @@keyframes to avoid Razor error */
+    @@keyframes ticker {
+        0% { transform: translate3d(0, 0, 0); }
+        100% { transform: translate3d(-100%, 0, 0); }
+    }
+    .ticker-wrap {
+        overflow: hidden;
+        position: relative;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 8px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .ticker {
+        display: inline-block;
+        white-space: nowrap;
+        animation: ticker 15s linear infinite;
+    }
+    .ticker:hover { animation-play-state: paused; }
+
+    /* ✅ Hover Card Effect */
+    .hover-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+</style>
+}

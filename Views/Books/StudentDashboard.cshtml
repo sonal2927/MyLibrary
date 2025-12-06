@@ -1,0 +1,191 @@
+@model LibraryManagementSystem.Models.ViewModels.DashboardViewModel
+@using LibraryManagementSystem.Models
+@{
+    ViewData["Title"] = "Student Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var now = DateTime.Now;
+}
+
+<div class="container mt-4">
+
+
+    <!-- ✅ 📢 Latest Announcements -->
+    <div class="mt-4">
+        <h5 class="fw-bold mb-3">📢 Latest Announcements</h5>
+        <div class="list-group shadow-sm">
+            @foreach (var announcement in Model.Announcements ?? new List<Announcement>())
+            {
+                <div class="list-group-item list-group-item-action mb-2 rounded shadow-sm p-3 hover-zoom">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="fw-bold text-primary mb-1">
+                            <i class="bi bi-megaphone-fill text-danger"></i> @announcement.Title
+                        </h6>
+                        <small class="text-muted">@announcement.CreatedAt.ToString("dd MMM yyyy")</small>
+                    </div>
+                    <p class="mb-1 text-secondary">@announcement.Message</p>
+                </div>
+            }
+        </div>
+    </div>
+
+
+    <!-- 📋 My Issued & Requested Books -->
+    <div class="mt-5">
+        <h5 class="fw-bold">📋 My Issued & Requested Books</h5>
+        @if (Model.BookRequests != null && Model.BookRequests.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle text-center shadow-sm mt-3">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Book</th>
+                            <th>Author</th>
+                            <th>Issued At</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model.BookRequests)
+                        {
+                            var totalDays = (r.DueAt.HasValue && r.IssuedAt.HasValue)
+                                ? (r.DueAt.Value - r.IssuedAt.Value).TotalDays
+                                : 0;
+                            var usedDays = (r.IssuedAt.HasValue)
+                                ? (now - r.IssuedAt.Value).TotalDays
+                                : 0;
+                            var progress = totalDays > 0 ? Math.Min(100, (usedDays / totalDays) * 100) : 0;
+                            var barClass = progress > 80 ? "bg-danger" :
+                                           progress > 60 ? "bg-warning" : "bg-success";
+
+                            <tr>
+                                <td>@r.Book.Title</td>
+                                <td>@r.Book.Author</td>
+                                <td>@(r.IssuedAt?.ToString("dd MMM yyyy") ?? "-")</td>
+                                <td>@(r.DueAt?.ToString("dd MMM yyyy") ?? "-")</td>
+                                <td>
+                                    @switch (r.Status)
+                                    {
+                                        case BookStatus.Requested:
+                                            <span class="badge bg-warning text-dark">⏳ Requested</span>
+                                            break;
+                                        case BookStatus.Issued:
+                                            <span class="badge bg-success">✅ Issued</span>
+                                            break;
+                                        case BookStatus.Submitted:
+                                            <span class="badge bg-primary">📦 Submitted</span>
+                                            break;
+                                        case BookStatus.Cancelled:
+                                            <span class="badge bg-danger">❌ Cancelled</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">❓ Unknown</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar @barClass"
+                                             role="progressbar"
+                                             style="width: @progress%">
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted mt-2">No issued or requested books yet.</p>
+        }
+    </div>
+
+    <!-- ✨ Explore Library -->
+    <div class="mt-5">
+        <h5 class="fw-bold">✨ Explore Library</h5>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+            @foreach (var book in Model.FeaturedBooks ?? new List<Book>())
+            {
+                var imagePath = book.ImageList?.FirstOrDefault() ?? "/images/books/default-book.png";
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm hover-card" data-bs-toggle="modal" data-bs-target="#quickViewModal"
+                         data-title="@book.Title" data-author="@book.Author" data-image="@imagePath">
+                        <img src="@imagePath"
+                             onerror="this.onerror=null; this.src='/images/books/default-book.png';"
+                             class="card-img-top"
+                             alt="@book.Title"
+                             style="height: 250px; object-fit: cover;" />
+                        <div class="card-body">
+                            <h5 class="card-title">@book.Title</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">@book.Author</h6>
+                            <p class="card-text">
+                                <strong>Status:</strong>
+                                @if (book.IsAvailable)
+                                {
+                                    <span class="badge bg-success">Available</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Not Available</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="text-end mt-3">
+            <a href="/Books/BrowseBooks" class="btn btn-outline-primary">🔎 View All Books</a>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ Quick View Modal -->
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quickViewModalLabel">Book Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" class="img-fluid rounded shadow mb-3" style="height:250px;object-fit:cover;" />
+                <h5 id="modalTitle"></h5>
+                <p id="modalAuthor" class="text-muted"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const quickViewModal = document.getElementById('quickViewModal');
+    quickViewModal.addEventListener('show.bs.modal', function (event) {
+        const card = event.relatedTarget;
+        document.getElementById('modalTitle').innerText = card.getAttribute('data-title');
+        document.getElementById('modalAuthor').innerText = "by " + card.getAttribute('data-author');
+        document.getElementById('modalImage').src = card.getAttribute('data-image');
+    });
+</script>
+
+<style>
+    .hover-zoom { transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer; }
+    .hover-zoom:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+    .card, .table { border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
+    .progress { background-color: #f0f0f0; border-radius: 6px; overflow: hidden; }
+    .progress-bar { transition: width 0.5s ease; }
+    .hover-card { transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
+    .hover-card:hover { transform: translateY(-5px); box-shadow: 0 6px 14px rgba(0,0,0,0.2); }
+    .btn-outline-primary, .btn-outline-info, .btn-outline-warning {
+        font-weight: 500; border-width: 2px; transition: all 0.3s ease;
+    }
+    .btn-outline-primary:hover, .btn-outline-info:hover, .btn-outline-warning:hover {
+        color: #fff; transform: translateY(-2px);
+    }
+</style>
+}

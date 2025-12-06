@@ -1,0 +1,115 @@
+@model IEnumerable<LibraryManagementSystem.Models.Book>
+
+@{
+    ViewData["Title"] = "Browse Books";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var isLoggedIn = Context.Session.GetString("LoginId") != null;
+}
+
+<div class="container my-5">
+    <!-- ✅ Page Title -->
+    <h2 class="text-center text-primary fw-bold mb-4">
+        <i class="bi bi-book-half"></i> Browse Books by Department
+    </h2>
+
+    <!-- ✅ Search Bar -->
+    <form asp-action="BrowseBooks" method="get" class="row justify-content-center mb-4">
+        <div class="col-md-6 d-flex">
+            <input type="text" name="search" class="form-control shadow-sm me-2"
+                   placeholder="🔍 Search books by title or author..." />
+            <button type="submit" class="btn btn-primary shadow-sm">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </form>
+
+    <!-- ✅ Department Filters -->
+    <div class="d-flex justify-content-center mb-4 flex-wrap gap-2">
+        <a href="?department=All" class="btn btn-outline-secondary btn-sm">All</a>
+        <a href="?department=CSE" class="btn btn-outline-primary btn-sm">CSE</a>
+        <a href="?department=IT" class="btn btn-outline-success btn-sm">IT</a>
+        <a href="?department=Mechanical" class="btn btn-outline-warning btn-sm">Mechanical</a>
+        <a href="?department=Civil" class="btn btn-outline-info btn-sm">Civil</a>
+        <a href="?department=Chemical" class="btn btn-outline-danger btn-sm">Chemical</a>
+    </div>
+
+    <!-- ✅ Book Cards -->
+    <div class="row">
+        @foreach (var book in Model)
+        {
+            var imagePath = book.ImageList.FirstOrDefault() ?? "/images/books/default-book.png";
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-0 rounded-3 hover-card">
+                    <img src="@imagePath"
+                         onerror="this.onerror=null; this.src='/images/books/default-book.png';"
+                         class="card-img-top rounded-top"
+                         alt="@book.Title"
+                         style="height: 240px; object-fit: cover;" />
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold text-truncate">@book.Title</h5>
+                        <p class="card-text text-muted small mb-1">
+                            <i class="bi bi-person"></i> @book.Author
+                        </p>
+                        <p class="card-text">
+                            <strong>Status:</strong>
+                            @if (book.IsAvailable)
+                            {
+                                <span class="badge bg-success">Available</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Unavailable</span>
+                            }
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between gap-2">
+                            <a asp-action="Details" asp-route-id="@book.Id"
+                               class="btn btn-sm btn-outline-info w-50">
+                                <i class="bi bi-eye"></i> Details
+                            </a>
+
+                            @if (isLoggedIn)
+                            {
+                                @if (book.IsAvailable)
+                                {
+                                    <a asp-action="RequestIssue" asp-controller="Books" asp-route-id="@book.Id"
+                                       class="btn btn-sm btn-primary w-50">
+                                        <i class="bi bi-bookmark-plus"></i> Add
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-secondary w-50" disabled>
+                                        <i class="bi bi-x-circle"></i> Not Available
+                                    </button>
+                                }
+                            }
+                            else
+                            {
+                                <a href="~/Account/Login"
+                                   class="btn btn-sm btn-success w-50"
+                                   onclick="alert('Please login to add books!')">
+                                    <i class="bi bi-box-arrow-in-right"></i> Login
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .hover-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+}

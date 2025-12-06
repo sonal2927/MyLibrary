@@ -1,0 +1,28 @@
+@model LibraryManagementSystem.Models.RenewalRequest
+
+@{
+    ViewData["Title"] = "Request Renewal";
+}
+
+<div class="container my-5">
+    <h2 class="text-primary">🔁 Request Renewal</h2>
+
+    <form asp-action="RenewBook" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="BookRecordId" />
+        <input type="hidden" asp-for="LoginId" />
+
+        <div class="mb-3">
+            <label asp-for="RequestedDays" class="form-label">Additional Days Needed</label>
+            <input asp-for="RequestedDays" type="number" class="form-control" min="1" max="30" required />
+            <span asp-validation-for="RequestedDays" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+        <a href="/Books/IssuedBooks" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

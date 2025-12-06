@@ -1,0 +1,41 @@
+@model List<LibraryManagementSystem.Models.Announcement>
+
+@{
+    ViewData["Title"] = "All Announcements";
+}
+
+<h3>📜 All Announcements</h3>
+
+@if (Model.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Message</th>
+                <th>Audience</th>
+                <th>Posted By</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var a = Model[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@a.Title</td>
+                    <td>@a.Message</td>
+                    <td>@a.Audience</td>
+                    <td>@a.CreatedBy</td>
+                    <td>@a.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">No announcements yet.</p>
+}

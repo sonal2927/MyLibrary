@@ -1,0 +1,29 @@
+@model LibraryManagementSystem.Models.Announcement
+
+@{
+    ViewData["Title"] = "Make Announcement";
+}
+
+<h2 class="mb-3">📢 Post a New Announcement</h2>
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Message" class="form-label"></label>
+        <textarea asp-for="Message" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Message" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Audience" class="form-label"></label>
+        <select asp-for="Audience" class="form-select" asp-items="Html.GetEnumSelectList<AudienceType>()"></select>
+        <span asp-validation-for="Audience" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">📢 Post</button>
+</form>

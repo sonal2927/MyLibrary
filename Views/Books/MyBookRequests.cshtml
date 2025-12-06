@@ -1,0 +1,45 @@
+@model List<LibraryManagementSystem.Models.BookRequest>
+@{
+    ViewData["Title"] = "My Book Requests";
+}
+
+<h2>📚 My Book Requests</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Requested On</th>
+            <th>Status</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>@request.Title</td>
+                <td>@request.Author</td>
+                <td>@request.Category</td>
+                <td>@request.RequestDate.ToShortDateString()</td>
+                <td>
+                    @if (request.Status == "Approved")
+                    {
+                        <span class="badge bg-success">✅ Approved</span>
+                    }
+                    else if (request.Status == "Rejected")
+                    {
+                        <span class="badge bg-danger">❌ Rejected</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">⏳ Pending</span>
+                    }
+                </td>
+                <td>@request.Message</td>
+            </tr>
+        }
+    </tbody>
+</table>

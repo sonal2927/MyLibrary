@@ -1,0 +1,38 @@
+@model LibraryManagementSystem.Models.ViewModels.BookIssueRequestViewModel
+
+@{
+    ViewData["Title"] = "Issue Book Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary mb-4">📄 Book Issue Request</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="RequestIssue" method="post">
+                <input type="hidden" name="BookId" value="@Model.BookId" />
+
+                <div class="mb-3">
+                    <label class="form-label">Book Title</label>
+                    <input type="text" class="form-control" value="@Model.Title" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Author</label>
+                    <input type="text" class="form-control" value="@Model.Author" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Reason for Issue</label>
+                    <textarea name="Reason" class="form-control" rows="3" required placeholder="Optional reason..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-paper-plane"></i> Submit Request
+                </button>
+                <a href="@Url.Action("Index", "Books")" class="btn btn-secondary ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
