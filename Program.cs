@@ -5,7 +5,7 @@ using LibraryManagementSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Email Service Optional
+// Email Service (optional)
 builder.Services.AddTransient<IEmailService, EmailService>();
 
 // Database
@@ -22,7 +22,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Migrations + Seed
+// Run migrations + seed
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
@@ -36,7 +36,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// ❌ DO NOT USE HTTPS REDIRECTION ON RAILWAY
+// app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
@@ -46,11 +48,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Railway PORT binding
+// ✔ Railway PORT binding (FINAL FIX)
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-
-// ❗ THIS FIXES THE 502 ERROR
-app.Urls.Clear();
+app.Urls.Clear(); // IMPORTANT
 app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Run();
