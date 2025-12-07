@@ -5,44 +5,31 @@ using LibraryManagementSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Email Service (won’t crash if SMTP missing)
+// Email Service Optional
 builder.Services.AddTransient<IEmailService, EmailService>();
 
-// ✅ Database Context
+// Database
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("LibraryConnection"),
         new MySqlServerVersion(new Version(8, 0, 34))
     ));
 
-// Middleware
 builder.Services.AddAuthorization();
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// ✅ Safe DB Migrate + Seed (no crash even if DB empty / duplicate)
+// Migrations + Seed
 using (var scope = app.Services.CreateScope())
 {
-    try
-    {
-        var services = scope.ServiceProvider;
-        var context = services.GetRequiredService<LibraryDbContext>();
-
-        context.Database.Migrate();
-
-        // Safe seeding
-        DbSeeder.Seed(context);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("DB Migration/Seed Failed: " + ex.Message);
-    }
+    var context = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+    context.Database.Migrate();
+    DbSeeder.Seed(context);
 }
 
-// Error handling
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -55,14 +42,15 @@ app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
 
-// Default Route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// ✅ Correct Railway port binding
+// Railway PORT binding
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
+// ❗ THIS FIXES THE 502 ERROR
+app.Urls.Clear();
 app.Urls.Add($"http://0.0.0.0:{port}");
 
-// RUN SERVER
 app.Run();
