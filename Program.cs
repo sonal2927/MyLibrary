@@ -1,7 +1,7 @@
 using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Data; // For DbSeeder
 using Microsoft.EntityFrameworkCore;
-using LibraryManagementSystem.Services; // ✅ Email Service Namespace
+using LibraryManagementSystem.Services; // Email Service Namespace
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +21,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(); // Enables session
 builder.Services.AddControllersWithViews();
 
+// ✅ Build app
 var app = builder.Build();
 
 // ✅ Seed the database
@@ -29,7 +30,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<LibraryDbContext>();
 
-    // Optional: Apply migrations automatically
+    // Apply migrations automatically
     context.Database.Migrate();
 
     // Seed initial data
@@ -45,7 +46,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
@@ -54,5 +54,9 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// ✅ Bind to Railway port
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Add($"http://*:{port}");
 
 app.Run();
