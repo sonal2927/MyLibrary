@@ -1,11 +1,11 @@
 using LibraryManagementSystem.Models;
-using LibraryManagementSystem.Data; // For DbSeeder
+using LibraryManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
-using LibraryManagementSystem.Services; // Email Service Namespace
+using LibraryManagementSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Add Email Service
+// ✅ Email Service (won’t crash if SMTP missing)
 builder.Services.AddTransient<IEmailService, EmailService>();
 
 // ✅ Database Context
@@ -15,29 +15,34 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
         new MySqlServerVersion(new Version(8, 0, 34))
     ));
 
-// ✅ Middleware Services
+// Middleware
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSession(); // Enables session
+builder.Services.AddSession();
 builder.Services.AddControllersWithViews();
 
-// ✅ Build app
 var app = builder.Build();
 
-// ✅ Seed the database
+// ✅ Safe DB Migrate + Seed (no crash even if DB empty / duplicate)
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<LibraryDbContext>();
+    try
+    {
+        var services = scope.ServiceProvider;
+        var context = services.GetRequiredService<LibraryDbContext>();
 
-    // Apply migrations automatically
-    context.Database.Migrate();
+        context.Database.Migrate();
 
-    // Seed initial data
-    DbSeeder.Seed(context);
+        // Safe seeding
+        DbSeeder.Seed(context);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("DB Migration/Seed Failed: " + ex.Message);
+    }
 }
 
-// Error Handling
+// Error handling
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -55,8 +60,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// ✅ Bind to Railway port
+// ✅ Correct Railway port binding
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Run($"http://0.0.0.0:{port}");
+app.Urls.Add($"http://0.0.0.0:{port}");
 
-
+// RUN SERVER
+app.Run();
