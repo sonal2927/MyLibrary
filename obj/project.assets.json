@@ -6411,11 +6411,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\internship proj\\MyLibrary\\MyLibrary\\MyLibrary.csproj",
+      "projectUniqueName": "E:\\internship proj\\MyLibrary\\MyLibrary.csproj",
       "projectName": "MyLibrary",
-      "projectPath": "E:\\internship proj\\MyLibrary\\MyLibrary\\MyLibrary.csproj",
+      "projectPath": "E:\\internship proj\\MyLibrary\\MyLibrary.csproj",
       "packagesPath": "C:\\Users\\Dell\\.nuget\\packages\\",
-      "outputPath": "E:\\internship proj\\MyLibrary\\MyLibrary\\obj\\",
+      "outputPath": "E:\\internship proj\\MyLibrary\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Dell\\AppData\\Roaming\\NuGet\\NuGet.Config"

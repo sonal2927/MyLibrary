@@ -9,207 +9,207 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = MyLibrary
 build_property.RootNamespace = MyLibrary
-build_property.ProjectDir = E:\internship proj\MyLibrary\MyLibrary\
+build_property.ProjectDir = E:\internship proj\MyLibrary\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = E:\internship proj\MyLibrary\MyLibrary
+build_property.MSBuildProjectDirectory = E:\internship proj\MyLibrary
 build_property._RazorSourceGeneratorDebug = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Account/AdminApproval.cshtml]
+[E:/internship proj/MyLibrary/Views/Account/AdminApproval.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxBZG1pbkFwcHJvdmFsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Account/EditUser.cshtml]
+[E:/internship proj/MyLibrary/Views/Account/EditUser.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxFZGl0VXNlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Account/ForgotPassword.cshtml]
+[E:/internship proj/MyLibrary/Views/Account/ForgotPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Account/login.cshtml]
+[E:/internship proj/MyLibrary/Views/Account/login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxsb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Account/Register.cshtml]
+[E:/internship proj/MyLibrary/Views/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Account/UserDetails.cshtml]
+[E:/internship proj/MyLibrary/Views/Account/UserDetails.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxVc2VyRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Account/UserInfo.cshtml]
+[E:/internship proj/MyLibrary/Views/Account/UserInfo.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxVc2VySW5mby5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Account/_PendingUserTable.cshtml]
+[E:/internship proj/MyLibrary/Views/Account/_PendingUserTable.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxfUGVuZGluZ1VzZXJUYWJsZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Account/_UserApprovalTable.cshtml]
+[E:/internship proj/MyLibrary/Views/Account/_UserApprovalTable.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxfVXNlckFwcHJvdmFsVGFibGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Announcement/Create.cshtml]
+[E:/internship proj/MyLibrary/Views/Announcement/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQW5ub3VuY2VtZW50XENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Announcement/List.cshtml]
+[E:/internship proj/MyLibrary/Views/Announcement/List.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQW5ub3VuY2VtZW50XExpc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/AddBook.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/AddBook.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcQWRkQm9vay5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/ApproveRequest.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/ApproveRequest.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcQXBwcm92ZVJlcXVlc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/BrowseBooks.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/BrowseBooks.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcQnJvd3NlQm9va3MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/Create.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/delete.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcZGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/Details.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/FacultyBooks.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/FacultyBooks.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcRmFjdWx0eUJvb2tzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/FacultyDashboard.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/FacultyDashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcRmFjdWx0eURhc2hib2FyZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/Index.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/IssueBookForm.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/IssueBookForm.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcSXNzdWVCb29rRm9ybS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/IssuedBooks.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/IssuedBooks.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcSXNzdWVkQm9va3MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/IssuedBooksReport.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/IssuedBooksReport.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcSXNzdWVkQm9va3NSZXBvcnQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/LibrarianDashboard.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/LibrarianDashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcTGlicmFyaWFuRGFzaGJvYXJkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/ManageBookRequests.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/ManageBookRequests.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcTWFuYWdlQm9va1JlcXVlc3RzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/MyBookRequests.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/MyBookRequests.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcTXlCb29rUmVxdWVzdHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/MyProfile.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/MyProfile.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcTXlQcm9maWxlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/MyRequests.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/MyRequests.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcTXlSZXF1ZXN0cy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/ReadingHistory.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/ReadingHistory.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcUmVhZGluZ0hpc3RvcnkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/Renew.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/Renew.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcUmVuZXcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/RenewalRequest.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/RenewalRequest.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcUmVuZXdhbFJlcXVlc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/Request.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/Request.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcUmVxdWVzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/RequestBook.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/RequestBook.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcUmVxdWVzdEJvb2suY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/RequestIssue.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/RequestIssue.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcUmVxdWVzdElzc3VlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/Search.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/Search.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcU2VhcmNoLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Books/StudentDashboard.cshtml]
+[E:/internship proj/MyLibrary/Views/Books/StudentDashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcU3R1ZGVudERhc2hib2FyZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Home/AboutLibrary.cshtml]
+[E:/internship proj/MyLibrary/Views/Home/AboutLibrary.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBYm91dExpYnJhcnkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Home/Contact.cshtml]
+[E:/internship proj/MyLibrary/Views/Home/Contact.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxDb250YWN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Home/Index.cshtml]
+[E:/internship proj/MyLibrary/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Home/Privacy.cshtml]
+[E:/internship proj/MyLibrary/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Report/Report.cshtml]
+[E:/internship proj/MyLibrary/Views/Report/Report.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFJlcG9ydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Shared/Components/LatestAnnouncements/Default.cshtml]
+[E:/internship proj/MyLibrary/Views/Shared/Components/LatestAnnouncements/Default.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcTGF0ZXN0QW5ub3VuY2VtZW50c1xEZWZhdWx0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Shared/Error.cshtml]
+[E:/internship proj/MyLibrary/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Shared/_OldProfileLayout.cshtml]
+[E:/internship proj/MyLibrary/Views/Shared/_OldProfileLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9PbGRQcm9maWxlTGF5b3V0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Shared/_ValidationScriptsPartial.cshtml]
+[E:/internship proj/MyLibrary/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/User/info.cshtml]
+[E:/internship proj/MyLibrary/Views/User/info.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxpbmZvLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/_ViewImports.cshtml]
+[E:/internship proj/MyLibrary/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/_ViewStart.cshtml]
+[E:/internship proj/MyLibrary/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/internship proj/MyLibrary/MyLibrary/Views/Shared/_Layout.cshtml]
+[E:/internship proj/MyLibrary/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-l44ozel0ai
