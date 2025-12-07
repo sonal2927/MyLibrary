@@ -57,6 +57,6 @@ app.MapControllerRoute(
 
 // ✅ Bind to Railway port
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Add($"http://*:{port}");
+app.Run($"http://0.0.0.0:{port}");
 
 app.Run();
