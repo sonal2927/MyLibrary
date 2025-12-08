@@ -6,46 +6,65 @@
 @section Styles {
 <style>
 
-    /* 🔥 PAGE BACKGROUND */
+    /* 🌍 FULL PAGE BACKGROUND */
     body {
         background: url('/images/librarybg.jpg') no-repeat center center fixed;
         background-size: cover;
+
+        /* 🔥 Top-bottom curve */
+        border-radius: 25px;
+        overflow: hidden;
     }
 
-   /* 🌈 HERO SECTION – GLASS CARD LIKE OTHERS */
+    /* 🌈 HERO SECTION – GLASS */
     .contact-hero {
         width: 95%;
         max-width: 1400px;
         margin: 30px auto;
         padding: 60px 20px;
 
-        background: rgba(255, 255, 255, 0.18);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
+        background: rgba(255, 255, 255, 0.20);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
 
         border-radius: 20px; 
-        border: 1px solid rgba(255, 255, 255, 0.35);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        border: 1px solid rgba(255, 255, 255, 0.40);
+        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.25);
 
         text-align: center;
     }
+
     .contact-hero h1 {
         color: white;
         font-weight: 700;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        text-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
+
     .contact-hero p {
-        color: #f8f8f8;
+        color: #f1f1f1;
         font-size: 1.1rem;
     }
 
+    /* 🌟 REAL GLASS CARD (FIXED) */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.20);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+
+        border-radius: 20px;
+        padding: 35px;
+        border: 1px solid rgba(255, 255, 255, 0.40);
+
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        transition: 0.25s ease-in-out;
+    }
 
     .glass-card:hover {
         transform: translateY(-6px);
-        box-shadow: 0 14px 40px rgba(0,0,0,0.28);
+        box-shadow: 0 14px 45px rgba(0,0,0,0.35);
     }
 
-    /* Page Section */
+    /* 📌 Main section spacing */
     .contact-section {
         padding: 70px 10px;
     }
@@ -58,38 +77,35 @@
 
     .map-box {
         height: 300px;
-        border-radius: 20px;
+        border-radius: 15px;
         overflow: hidden;
         border: 1px solid rgba(255,255,255,0.4);
     }
 
-    .contact-details p {
-        font-size: 1.05rem;
-        font-weight: 500;
-        color: #222;
-    }
-
     .glass-title {
         font-weight: 700;
-        color: #111;
+        color: #000;
     }
 
+    .contact-details p {
+        color: black;
+        font-weight: 500;
+    }
 </style>
 }
 
-<!-- 🌈 HERO SECTION -->
+<!-- 🌈 HERO CARD -->
 <div class="contact-hero">
-    <div class="container">
-        <h1 class="display-5 fw-bold">📞 Contact the Library</h1>
-        <p class="lead">We're here to help! Reach out anytime.</p>
-    </div>
+    <h1 class="display-5 fw-bold">📞 Contact the Library</h1>
+    <p class="lead">We're here to help! Reach out anytime.</p>
 </div>
+
 
 <!-- 📘 MAIN CONTENT -->
 <div class="contact-section container">
     <div class="row g-4 align-items-stretch">
 
-        <!-- 📬 CONTACT DETAILS -->
+        <!-- 📬 DETAILS CARD -->
         <div class="col-md-6">
             <div class="glass-card h-100 contact-details">
                 <h3 class="glass-title mb-4">📬 Get in Touch</h3>
@@ -120,7 +136,7 @@
             </div>
         </div>
 
-        <!-- 📍 MAP SECTION -->
+        <!-- 🗺 MAP CARD -->
         <div class="col-md-6">
             <div class="glass-card h-100">
                 <h3 class="glass-title mb-4">📍 Find Us</h3>
@@ -132,7 +148,7 @@
                     </iframe>
                 </div>
 
-                <p class="text-muted small">*Location map is for reference only. Please verify with the official address.</p>
+                <p class="text-muted small">*Location map is for reference only.</p>
             </div>
         </div>
 
