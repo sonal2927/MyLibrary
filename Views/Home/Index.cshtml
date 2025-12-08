@@ -8,183 +8,198 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <style>
-
-        /* ===================================
-        GLOBAL PAGE BACKGROUND (Premium Look)
-        =================================== */
-
-        body.loaded {
-            opacity: 1 !important;
-        }
-
+        /* ===============================
+        BODY & GLOBAL STYLES
+        =============================== */
         body {
-            background: linear-gradient(to bottom, #fdfdfd, #f3f7ff);
-            background-attachment: fixed;
-            opacity: 0;
-            transition: opacity .6s ease-in-out;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            transition: background 0.5s, color 0.5s;
+            background: linear-gradient(180deg, #f5f7fa, #e4ebf5);
+            color: #222;
         }
 
-        /* subtle pattern */
-        .container-fluid {
-            background: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
+        body.dark-mode {
+            background: linear-gradient(180deg, #1c1c1c, #2b2b2b);
+            color: #eee;
         }
 
-        /* ===================================
-        HERO SECTION (Retain your original)
-        =================================== */
+        a {
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        /* ===============================
+        HERO SECTION
+        =============================== */
         .hero {
             background: linear-gradient(
-                    to right,
-                    rgba(0, 0, 0, .55),
-                    rgba(0, 0, 0, .6)
+                        rgba(0,0,0,0.45),
+                        rgba(0,0,0,0.5)
                     ),
                     url('/images/librarybg.jpg') center/cover no-repeat;
-            color: rgb(236, 195, 157);
-            padding: 150px 30px;
+            color: #fff;
+            padding: 140px 30px;
             text-align: center;
-            background-attachment: fixed;
             border-bottom-left-radius: 25px;
             border-bottom-right-radius: 25px;
         }
 
-        /* ===================================
-        STATS — Better Glassmorphism Look
-        =================================== */
+        body.dark-mode .hero {
+            color: #ffd480;
+            background: linear-gradient(
+                        rgba(0,0,0,0.65),
+                        rgba(0,0,0,0.7)
+                    ),
+                    url('/images/librarybg.jpg') center/cover no-repeat;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+        }
+
+        /* ===============================
+        ANNOUNCEMENT BAR
+        =============================== */
+        .announcement-bar {
+            background: #fff3cd;
+            border-bottom: 1px solid #ffeeba;
+            box-shadow: 0 3px 8px rgba(0,0,0,.1);
+            padding: 12px 0;
+            font-weight: 500;
+        }
+
+        body.dark-mode .announcement-bar {
+            background: #4a4a2a;
+            border-color: #5e5e3a;
+            color: #fff7c0;
+        }
+
+        /* ===============================
+        STATS BOX
+        =============================== */
         .stat-box {
-            border-radius: 20px;
-            padding: 35px 20px;
-            backdrop-filter: blur(14px);
-            background: rgba(255,255,255,0.65);
-            transition: .3s ease;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 18px;
+            padding: 30px 20px;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 25px rgba(0,0,0,.08);
+            transition: all 0.3s ease;
         }
 
         .stat-box:hover {
-            transform: translateY(-6px);
-            background: rgba(255,255,255,0.88);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 35px rgba(0,0,0,.12);
         }
 
-        /* ===================================
-        NAV CARDS — Premium Gradient Style
-        =================================== */
+        body.dark-mode .stat-box {
+            background: rgba(40, 40, 40, 0.7);
+            color: #fff;
+        }
+
+        /* ===============================
+        NAV CARDS
+        =============================== */
         .nav-card {
-            background: linear-gradient(to bottom right, #ffffff, #f4f8ff);
-            border-radius: 18px;
-            transition: transform .35s ease, box-shadow .35s ease;
-            border: 1px solid #e7ecf7;
+            border-radius: 15px;
+            transition: all 0.35s ease;
+            border: 1px solid rgba(0,0,0,.05);
+            background: linear-gradient(to bottom right, #fff, #f0f4ff);
         }
 
         .nav-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,.15);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 18px 35px rgba(0,0,0,.15);
         }
 
-        /* ===================================
-        ANNOUNCEMENT BAR (Shadow Enhanced)
-        =================================== */
-        .announcement-bar {
-            background: #fcebb6;
-            border-bottom: 1px solid #e0d2a2;
-            box-shadow: 0 3px 8px rgba(0,0,0,.15);
+        body.dark-mode .nav-card {
+            background: linear-gradient(to bottom right, #2b2b2b, #383838);
+            border-color: rgba(255,255,255,.1);
         }
 
-        /* ===================================
-        Fade Animations
-        =================================== */
-        @@keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to   { opacity: 1; transform: translateY(0); }
+        /* ===============================
+        DARK MODE BUTTON
+        =============================== */
+        #darkModeToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            color: #333;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border: none;
         }
 
-        @@keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to   { opacity: 1; transform: translateY(0); }
+        body.dark-mode #darkModeToggle {
+            background: #333;
+            color: #ffd480;
         }
 
     </style>
 }
 
 <!-- 🌙 Dark Mode Toggle -->
-<button id="darkModeToggle" class="btn btn-sm btn-outline-light bg-dark shadow">
+<button id="darkModeToggle">
     <i id="themeIcon" class="fa fa-moon"></i>
 </button>
 
-
 <div class="container-fluid px-0">
-
     <!-- 🟦 HERO -->
     <section class="hero mb-5">
         <div class="container">
             <h1>Welcome to SVMIT College Library 📚</h1>
-            <p class="mt-3">
-                Access thousands of books, journals & study materials — anytime, anywhere.
-            </p>
+            <p class="mt-3">Access thousands of books, journals & study materials — anytime, anywhere.</p>
         </div>
     </section>
 
-    <!-- 📢 ANNOUNCEMENT BAR (Static Design-Only) -->
+    <!-- 📢 ANNOUNCEMENT BAR -->
     <section class="announcement-bar text-center">
-        <strong>📢 Latest Announcement:</strong>
-        Library will remain closed on <b>10th July</b> for Book Fair.
+        <strong>📢 Latest Announcement:</strong> Library will remain closed on <b>10th July</b> for Book Fair.
     </section>
 
     <!-- 📘 ABOUT SECTION -->
     <section class="container my-5">
         <div class="row text-center g-4">
-
             <div class="col-md-4">
                 <h3>📖 About the Library</h3>
                 <p>Our library provides academic resources to support students & faculty.</p>
             </div>
-
             <div class="col-md-4">
                 <h3>🎓 Who Can Access</h3>
                 <p>Students, faculty, and staff can browse, request and issue books.</p>
             </div>
-
             <div class="col-md-4">
                 <h3>✨ Key Features</h3>
                 <p>Online book search, issue tracking, smart dashboard & alerts.</p>
             </div>
-
         </div>
     </section>
 
     <!-- 📊 STATS -->
-    <section class="bg-light py-5">
+    <section class="py-5">
         <div class="container text-center">
             <div class="row g-4">
-
-                <div class="col-md-3">
-                    <div class="stat-box">
-                        <h2>📚 5,000+</h2>
-                        <p>Total Books</p>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="stat-box">
-                        <h2>👩‍🎓 1,200+</h2>
-                        <p>Registered Users</p>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="stat-box">
-                        <h2>📂 15+</h2>
-                        <p>Categories</p>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="stat-box">
-                        <h2>🕐 9 AM – 5 PM</h2>
-                        <p>Library Timings</p>
-                    </div>
-                </div>
-
+                <div class="col-md-3"><div class="stat-box"><h2>📚 5,000+</h2><p>Total Books</p></div></div>
+                <div class="col-md-3"><div class="stat-box"><h2>👩‍🎓 1,200+</h2><p>Registered Users</p></div></div>
+                <div class="col-md-3"><div class="stat-box"><h2>📂 15+</h2><p>Categories</p></div></div>
+                <div class="col-md-3"><div class="stat-box"><h2>🕐 9 AM – 5 PM</h2><p>Library Timings</p></div></div>
             </div>
         </div>
     </section>
@@ -192,7 +207,6 @@
     <!-- 🧭 NAVIGATION -->
     <section class="container my-5">
         <div class="row text-center g-4">
-
             <div class="col-md-4">
                 <div class="card nav-card shadow h-100">
                     <div class="card-body">
@@ -202,7 +216,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="card nav-card shadow h-100">
                     <div class="card-body">
@@ -212,7 +225,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="card nav-card shadow h-100">
                     <div class="card-body">
@@ -222,19 +234,14 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 </div>
 
-
 @section Scripts {
-
-    <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Apply Saved Dark Mode
         const toggleBtn = document.getElementById('darkModeToggle');
         const icon = document.getElementById('themeIcon');
 
@@ -249,11 +256,7 @@
             applyDark(!isDark);
         });
 
+        // Apply saved preference
         applyDark(localStorage.getItem('darkMode') === 'true');
-
-        // Page fade effect
-        document.addEventListener("DOMContentLoaded", () => {
-            document.body.classList.add("loaded");
-        });
     </script>
 }
