@@ -226,7 +226,14 @@ namespace LibraryManagementSystem.Controllers
             return RedirectToAction("IssuedBooks");
         }
 
-       [HttpPost]
+        [HttpGet]
+        public IActionResult RequestBook(int id)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == id);
+            return View(book);
+        }
+
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RequestBook(int id, int daysNeeded, DateTime fromDate, DateTime toDate)
         {
@@ -527,7 +534,8 @@ namespace LibraryManagementSystem.Controllers
         }
 
     
-         [HttpGet]
+        
+        [HttpGet]
         public IActionResult MyRequests()
         {
             string? libId = HttpContext.Session.GetString("LoginId");
