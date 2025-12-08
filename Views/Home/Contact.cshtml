@@ -5,34 +5,41 @@
 
 @section Styles {
     <style>
+
+        /* 🔥 PAGE BACKGROUND IMAGE (NEW) */
+        body {
+            background: url('/images/librarybg.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
         /* 🌈 Hero Section */
         .contact-hero {
-            background: linear-gradient(135deg, rgba(106, 17, 203, 0.9), rgba(37, 117, 252, 0.9));
+            background: linear-gradient(135deg, rgba(106, 17, 203, 0.75), rgba(37, 117, 252, 0.75));
             color: white;
             padding: 80px 20px;
             text-align: center;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
         }
 
         .contact-hero h1 {
             font-weight: 700;
         }
 
-        /* 🌟 Glass Card Style */
+        /* 🌟 Updated Glass Card Style (IMPROVED FOR BACKGROUND) */
         .glass-card {
             background: rgba(255, 255, 255, 0.20);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border-radius: 18px;
             padding: 35px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.20);
             border: 1px solid rgba(255, 255, 255, 0.35);
             transition: 0.3s ease;
         }
 
         .glass-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 12px 38px rgba(0,0,0,0.22);
+            box-shadow: 0 14px 40px rgba(0,0,0,0.28);
         }
 
         /* Page Section */
@@ -57,12 +64,12 @@
         .contact-details p {
             font-size: 1.05rem;
             font-weight: 500;
-            color: #333;
+            color: #222;
         }
 
         .glass-title {
             font-weight: 700;
-            color: #222;
+            color: #111;
         }
     </style>
 }
