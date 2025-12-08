@@ -8,62 +8,96 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <style>
+
+        /* ============================
+           GLOBAL ANIMATIONS & EFFECTS
+        ============================ */
+
         body.dark-mode {
             background-color: #1e1e2f;
             color: #f1f1f1;
         }
 
+        /* Smooth Fade-in for full page */
+        body {
+            opacity: 0;
+            transition: opacity .5s ease-in;
+        }
+        body.loaded {
+            opacity: 1;
+        }
+
+        /* ============================
+           HERO SECTION
+        ============================ */
         .hero {
-            background: linear-gradient(to right, rgba(106, 17, 203, 0.8), rgba(37, 117, 252, 0.8)), 
+            background: linear-gradient(to right, rgba(106, 17, 203, 0.75), rgba(37, 117, 252, 0.75)),
                         url('/images/library-hero.jpg') center/cover no-repeat;
             color: white;
-            padding: 100px 20px;
+            padding: 120px 20px;
             text-align: center;
+            background-attachment: fixed; /* PARALLAX */
         }
 
         .hero h1 {
             font-weight: 700;
-            font-size: 3rem;
+            font-size: 3.2rem;
         }
 
+        .hero p {
+            font-size: 1.2rem;
+            opacity: .9;
+        }
+
+        /* ============================
+            ANNOUNCEMENT BAR
+        ============================ */
         .announcement-bar {
             background-color: #ffc107;
             color: #1f1f1f;
             font-weight: 500;
         }
 
+        /* ============================
+            STATS BOX (GLASS EFFECT)
+        ============================ */
         .stat-box {
             border-radius: 15px;
             padding: 30px 15px;
-            background-color: #f8f9fa;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.55);
             transition: 0.3s;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 12px rgba(0,0,0,0.15);
         }
 
         .stat-box:hover {
-            background-color: #e9ecef;
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.7);
         }
 
+        /* ============================
+            NAVIGATION CARDS
+        ============================ */
         .nav-card {
             border-radius: 12px;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform .35s ease, box-shadow .35s ease;
         }
 
         .nav-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 18px 40px rgba(0,0,0,.18);
         }
 
-        .nav-card h4 {
-            font-weight: 600;
-        }
-
+        /* ============================
+            DARK MODE TOGGLE
+        ============================ */
         #darkModeToggle {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 999;
         }
+
     </style>
 }
 
@@ -72,75 +106,86 @@
     <i id="themeIcon" class="fa fa-moon"></i>
 </button>
 
+
 <div class="container-fluid px-0">
 
-    <!-- 🟦 Hero Banner -->
-    <section class="hero mb-5">
+    <!-- 🟦 HERO BANNER -->
+    <section class="hero mb-5" data-aos="fade-up">
         <div class="container">
-            <h1 class="display-4">Welcome to SVMIT College Digital Library 📚</h1>
-            <p class="lead">Access thousands of books, journals, and learning resources — anytime, anywhere.</p>
+            <h1 class="" data-aos="zoom-in">Welcome to SVMIT College Digital Library 📚</h1>
+            <p class="lead mt-3" data-aos="zoom-in" data-aos-delay="200">
+                Access thousands of books, journals, and learning resources — anytime, anywhere.
+            </p>
         </div>
     </section>
 
-    <!-- 📢 Announcements -->
-    <section class="announcement-bar py-3 text-center">
-        <strong>📢 Announcement:</strong> Library will remain closed on <b>10th July</b> due to Book Fair. Check updated timings on the notice board.
+    <!-- 📢 ANNOUNCEMENT -->
+    <section class="announcement-bar py-3 text-center" data-aos="fade-right">
+        <strong>📢 Announcement:</strong> Library will remain closed on <b>10th July</b> due to Book Fair.
     </section>
 
-    <!-- 📘 About Section -->
+    <!-- 📘 ABOUT SECTION -->
     <section class="container my-5">
         <div class="row text-center g-4">
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="zoom-in">
                 <h3>📖 About the Library</h3>
-                <p>Our library supports students and faculty with a rich collection of resources across all departments.</p>
+                <p>Our library supports students and faculty with a rich collection of academic resources.</p>
             </div>
-            <div class="col-md-4">
+
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
                 <h3>🎓 Who Can Access</h3>
-                <p>Students, Faculty, and Staff of SVMIT College can explore, request, and issue books through this platform.</p>
+                <p>Students, Faculty, and Staff of SVMIT can access and request books anytime.</p>
             </div>
-            <div class="col-md-4">
+
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="400">
                 <h3>✨ Key Features</h3>
-                <p>Online Book Search, Issue Tracking, Request Management, Notifications, and more.</p>
+                <p>Online Book Search, Issue Tracking, Notifications & more.</p>
             </div>
         </div>
     </section>
 
-    <!-- 📊 Stats Section -->
+    <!-- 📊 STATS SECTION -->
     <section class="bg-light py-5">
         <div class="container text-center">
             <div class="row g-4">
-                <div class="col-md-3">
+
+                <div class="col-md-3" data-aos="flip-left">
                     <div class="stat-box">
                         <h2>📚 5,000+</h2>
                         <p>Total Books</p>
                     </div>
                 </div>
-                <div class="col-md-3">
+
+                <div class="col-md-3" data-aos="flip-left" data-aos-delay="200">
                     <div class="stat-box">
                         <h2>👩‍🎓 1,200+</h2>
                         <p>Registered Users</p>
                     </div>
                 </div>
-                <div class="col-md-3">
+
+                <div class="col-md-3" data-aos="flip-left" data-aos-delay="400">
                     <div class="stat-box">
                         <h2>📂 15+</h2>
                         <p>Categories</p>
                     </div>
                 </div>
-                <div class="col-md-3">
+
+                <div class="col-md-3" data-aos="flip-left" data-aos-delay="600">
                     <div class="stat-box">
                         <h2>🕐 9 AM – 5 PM</h2>
                         <p>Library Timings</p>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- 🧭 Navigation Cards -->
+    <!-- 🧭 NAVIGATION CARDS -->
     <section class="container my-5">
         <div class="row text-center g-4">
-            <div class="col-md-4">
+
+            <div class="col-md-4" data-aos="fade-up">
                 <div class="card nav-card shadow h-100">
                     <div class="card-body">
                         <h4>🔍 Explore Books</h4>
@@ -149,16 +194,18 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
                 <div class="card nav-card shadow h-100">
                     <div class="card-body">
                         <h4>🔐 Login</h4>
-                        <p>Login as Student, Faculty, Librarian or Admin.</p>
+                        <p>Login as Student, Faculty, Librarian, or Admin.</p>
                         <a href="@Url.Action("Login", "Account")" class="btn btn-success">Login Now</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="card nav-card shadow h-100">
                     <div class="card-body">
                         <h4>📞 Contact Helpdesk</h4>
@@ -167,13 +214,17 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 </div>
 
 @section Scripts {
+
+    <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Dark Mode -->
     <script>
         const toggleBtn = document.getElementById('darkModeToggle');
         const icon = document.getElementById('themeIcon');
@@ -189,8 +240,12 @@
             applyDarkMode(!isDark);
         });
 
-        // Initialize
         const prefersDark = localStorage.getItem('darkMode') === 'true';
         applyDarkMode(prefersDark);
+
+        // Page fade-in
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.classList.add("loaded");
+        });
     </script>
 }
