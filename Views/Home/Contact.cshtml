@@ -4,76 +4,84 @@
 }
 
 @section Styles {
-    <style>
+<style>
 
-        /* 🔥 PAGE BACKGROUND IMAGE (NEW) */
-        body {
-            background: url('/images/librarybg.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
+    /* 🔥 PAGE BACKGROUND */
+    body {
+        background: url('/images/librarybg.jpg') no-repeat center center fixed;
+        background-size: cover;
+    }
 
-        /* 🌈 Hero Section */
-        .contact-hero {
-            background: linear-gradient(135deg, rgba(82, 60, 47, 0.75), rgba(82, 60, 47, 0.75)));
-            color: white;
-            padding: 80px 20px;
-            text-align: center;
-            backdrop-filter: blur(6px);
-        }
+    /* 🌈 HERO SECTION – SAME GLASS STYLE AS CARDS */
+    .contact-hero {
+        background: rgba(82, 60, 47, 0.35); 
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: 80px 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+    }
 
-        .contact-hero h1 {
-            font-weight: 700;
-        }
+    .contact-hero h1 {
+        font-weight: 700;
+        color: white;
+    }
 
-        /* 🌟 Updated Glass Card Style (IMPROVED FOR BACKGROUND) */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.20);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 18px;
-            padding: 35px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.20);
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            transition: 0.3s ease;
-        }
+    .contact-hero p {
+        color: #f4f4f4;
+        font-size: 1.1rem;
+    }
 
-        .glass-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 14px 40px rgba(0,0,0,0.28);
-        }
+    /* 🌟 GLASS CARD STYLE */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.20);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 18px;
+        padding: 35px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.20);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        transition: 0.3s ease;
+    }
 
-        /* Page Section */
-        .contact-section {
-            padding: 70px 10px;
-        }
+    .glass-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 40px rgba(0,0,0,0.28);
+    }
 
-        .contact-icon {
-            font-size: 1.4rem;
-            color: #c1a7dd;
-            margin-right: 10px;
-        }
+    /* Page Section */
+    .contact-section {
+        padding: 70px 10px;
+    }
 
-        .map-box {
-            height: 300px;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.4);
-        }
+    .contact-icon {
+        font-size: 1.4rem;
+        color: #c1a7dd;
+        margin-right: 10px;
+    }
 
-        /* Typography */
-        .contact-details p {
-            font-size: 1.05rem;
-            font-weight: 500;
-            color: #222;
-        }
+    .map-box {
+        height: 300px;
+        border-radius: 15px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.4);
+    }
 
-        .glass-title {
-            font-weight: 700;
-            color: #111;
-        }
-    </style>
+    .contact-details p {
+        font-size: 1.05rem;
+        font-weight: 500;
+        color: #222;
+    }
+
+    .glass-title {
+        font-weight: 700;
+        color: #111;
+    }
+
+</style>
 }
 
+<!-- 🌈 HERO SECTION -->
 <div class="contact-hero">
     <div class="container">
         <h1 class="display-5 fw-bold">📞 Contact the Library</h1>
@@ -81,10 +89,11 @@
     </div>
 </div>
 
+<!-- 📘 MAIN CONTENT -->
 <div class="contact-section container">
     <div class="row g-4 align-items-stretch">
 
-        <!-- 📬 Contact Details -->
+        <!-- 📬 CONTACT DETAILS -->
         <div class="col-md-6">
             <div class="glass-card h-100 contact-details">
                 <h3 class="glass-title mb-4">📬 Get in Touch</h3>
@@ -115,7 +124,7 @@
             </div>
         </div>
 
-        <!-- 📍 Map Section -->
+        <!-- 📍 MAP SECTION -->
         <div class="col-md-6">
             <div class="glass-card h-100">
                 <h3 class="glass-title mb-4">📍 Find Us</h3>
@@ -123,11 +132,13 @@
                 <div class="map-box mb-3">
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3719.3935039513265!2d72.99999999999999!3d21.712938900000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be0333cbadf3e33%3A0xf4067b7a5b09e0e3!2sSVMIT%20College!5e0!3m2!1sen!2sin!4v1715151515151"
-                        width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
+                        width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy">
+                    </iframe>
                 </div>
 
                 <p class="text-muted small">*Location map is for reference only. Please verify with the official address.</p>
             </div>
         </div>
+
     </div>
 </div>
