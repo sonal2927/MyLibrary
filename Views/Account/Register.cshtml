@@ -156,51 +156,58 @@
         const studentFacultyDepartments = ["CSE", "IT", "Mechanical", "Civil", "Electrical"];
         const librarianDepartments = ["Senior Librarian", "Assistant", "Librarian"];
 
-        function updateFields() {
-            const role = roleDropdown.value;
+        function updateFields() 
+        {
+        const role = roleDropdown.value;
 
-            const identifierField = document.getElementById("identifierField");
-            const identifierLabel = document.getElementById("identifierLabel");
-            const yearField = document.getElementById("yearField");
-            const semesterField = document.getElementById("semesterField");
+        const identifierField = document.getElementById("identifierField");
+        const identifierLabel = document.getElementById("identifierLabel");
+        const yearField = document.getElementById("yearField");
+        const semesterField = document.getElementById("semesterField");
 
-            // Hide all
-            identifierField.style.display = "none";
-            yearField.style.display = "none";
-            semesterField.style.display = "none";
+        // Hide all fields
+        identifierField.style.display = "none";
+        yearField.style.display = "none";
+        semesterField.style.display = "none";
 
-            // Show based on role
-            if (role === "Student") {
-                identifierLabel.innerText = "Enrollment Number";
-                identifierField.style.display = "block";
-                yearField.style.display = "block";
-                semesterField.style.display = "block";
-            } else if (role === "Faculty") {
-                identifierLabel.innerText = "Faculty ID";
-                identifierField.style.display = "block";
-            } else if (role === "Librarian") {
-                identifierLabel.innerText = "Librarian ID";
-                identifierField.style.display = "block";
-            }
-
-            // Update department dropdown
-            departmentDropdown.innerHTML = '<option value="">-- Select Department --</option>';
-            if (role === "Student" || role === "Faculty") {
-                studentFacultyDepartments.forEach(d => {
-                    const opt = document.createElement("option");
-                    opt.value = d;
-                    opt.text = d;
-                    departmentDropdown.add(opt);
-                });
-            } else if (role === "Librarian") {
-                librarianDepartments.forEach(d => {
-                    const opt = document.createElement("option");
-                    opt.value = d;
-                    opt.text = d;
-                    departmentDropdown.add(opt);
-                });
-            }
+        // Show based on role
+        if (role === "Student") {
+            identifierLabel.innerText = "Enrollment Number";
+            identifierField.style.display = "block";
+            yearField.style.display = "block";
+            semesterField.style.display = "block";
+        } else if (role === "Faculty") {
+            identifierLabel.innerText = "Faculty ID";
+            identifierField.style.display = "block";
+        } else if (role === "Librarian") {
+            identifierLabel.innerText = "Librarian ID";
+            identifierField.style.display = "block";
         }
+
+        // Update department dropdown
+        departmentDropdown.innerHTML = '<option value="">-- Select Department --</option>';
+
+        if (role === "Student" || role === "Faculty") {
+            studentFacultyDepartments.forEach(d => {
+                const opt = document.createElement("option");
+                opt.value = d;
+                opt.text = d;
+                departmentDropdown.add(opt);
+            });
+        } else if (role === "Librarian") {
+            librarianDepartments.forEach(d => {
+                const opt = document.createElement("option");
+                opt.value = d;
+                opt.text = d;
+                departmentDropdown.add(opt);
+            });
+        }
+
+        // ⭐ Preserve selected department after form reload
+        if ("@Model?.Department" !== "") {
+            departmentDropdown.value = "@Model?.Department";
+        }
+    }
 
         roleDropdown.addEventListener("change", updateFields);
         updateFields(); // Run on page load
