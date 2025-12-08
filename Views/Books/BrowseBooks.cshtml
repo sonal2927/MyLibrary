@@ -3,320 +3,227 @@
 @{
     ViewData["Title"] = "Browse Books";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
     var isLoggedIn = Context.Session.GetString("LoginId") != null;
     var selectedDepartment = Context.Request.Query["department"].ToString();
     var searchQuery = Context.Request.Query["search"].ToString();
 }
 
-<!--
-  IMPORTANT:
-  Put your chosen background image at: wwwroot/images/library-bg.jpg
-  (Or change the path in the CSS below to match your file name)
--->
+<div class="bg-blur"></div>
+<div class="bg-overlay"></div>
 
-<div class="app-wrapper">
+<div class="container py-4 position-relative" style="z-index:2;">
 
-    <!-- Decorative blurred background layer -->
-    <div class="bg-photo" aria-hidden="true"></div>
-    <div class="bg-overlay" aria-hidden="true"></div>
-
-    <div class="container py-4 position-relative" style="z-index:2;">
-
-        <!-- Top controls -->
-        <div class="controls-bar mb-3">
-            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start">
-                <div>
-                    <h2 class="h4 page-heading mb-1"><i class="bi bi-book-half"></i> Browse Books</h2>
-                    <p class="text-muted mb-0 small">By Department — filter, switch layout, and add if you're logged in.</p>
-                </div>
-
-                <div class="d-flex gap-2 align-items-center flex-wrap">
-                    <!-- Search -->
-                    <form asp-action="BrowseBooks" method="get" class="d-flex align-items-center">
-                        <input type="text" name="search" class="form-control control-search me-2" placeholder="Search by title or author..." value="@searchQuery" />
-                        <input type="hidden" name="department" value="@selectedDepartment" />
-                        <button class="btn btn-primary" type="submit" aria-label="Search"><i class="bi bi-search"></i></button>
-                    </form>
-
-                    <!-- Size -->
-                    <div class="btn-group btn-group-sm" role="group" aria-label="Size">
-                        <button type="button" class="btn btn-outline-light size-btn active" data-size="md" title="Medium"><i class="bi bi-aspect-ratio"></i></button>
-                        <button type="button" class="btn btn-outline-light size-btn" data-size="lg" title="Large"><i class="bi bi-aspect-ratio-fill"></i></button>
-                        <button type="button" class="btn btn-outline-light size-btn" data-size="sm" title="Small"><i class="bi bi-square"></i></button>
-                    </div>
-
-                    <!-- View -->
-                    <div class="btn-group btn-group-sm ms-2" role="group" aria-label="View">
-                        <button type="button" class="btn btn-outline-light view-btn active" data-view="grid" title="Grid"><i class="bi bi-grid-3x3-gap-fill"></i></button>
-                        <button type="button" class="btn btn-outline-light view-btn" data-view="list" title="List"><i class="bi bi-list"></i></button>
-                    </div>
-
-                    <!-- Theme -->
-                    <div class="form-check form-switch ms-2">
-                        <input class="form-check-input" type="checkbox" id="themeSwitch" checked />
-                        <label class="form-check-label small" for="themeSwitch">Dark</label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Departments filter -->
-            <div class="mt-3 d-flex gap-2 flex-wrap justify-content-center">
-                <a href="?department=All&search=@searchQuery" class="pill @(selectedDepartment == "All" ? "active-pill" : "")">All</a>
-                <a href="?department=CSE&search=@searchQuery" class="pill @(selectedDepartment == "CSE" ? "active-pill" : "")">CSE</a>
-                <a href="?department=IT&search=@searchQuery" class="pill @(selectedDepartment == "IT" ? "active-pill" : "")">IT</a>
-                <a href="?department=Mechanical&search=@searchQuery" class="pill @(selectedDepartment == "Mechanical" ? "active-pill" : "")">Mechanical</a>
-                <a href="?department=Civil&search=@searchQuery" class="pill @(selectedDepartment == "Civil" ? "active-pill" : "")">Civil</a>
-                <a href="?department=Chemical&search=@searchQuery" class="pill @(selectedDepartment == "Chemical" ? "active-pill" : "")">Chemical</a>
-            </div>
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+        <div>
+            <h2 class="fw-bold text-white"><i class="bi bi-book"></i> Browse Books</h2>
+            <p class="text-light opacity-75 small">Search, filter and explore books of all departments</p>
         </div>
 
-        <!-- Books area -->
-        <div class="container py-3">
-            <div id="booksArea" class="row g-4">
-                @if (!Model.Any())
-                {
-                    <div class="col-12">
-                        <div class="alert alert-info">No books found. Try different filters or search terms.</div>
-                    </div>
-                }
-                else
-                {
-                    foreach (var book in Model)
-                    {
-                        var imagePath = book.ImageList?.FirstOrDefault() ?? "/images/books/default-book.png";
-                        <div class="col-lg-4 col-md-6 book-item">
-                            <div class="glass-card card book-card h-100">
-                                <div class="card-media">
-                                    <img src="@imagePath" onerror="this.onerror=null; this.src='/images/books/default-book.png';" alt="@book.Title" class="book-img" />
-                                </div>
-                                <div class="card-body d-flex flex-column">
-                                    <div class="d-flex justify-content-between mb-2 align-items-start">
-                                        <div>
-                                            <h5 class="book-title mb-1" title="@book.Title">@book.Title</h5>
-                                            <p class="book-author small text-muted mb-0"><i class="bi bi-person"></i> @book.Author</p>
-                                        </div>
-                                        <div class="text-end">
-                                            <span class="badge @(book.IsAvailable ? "bg-success" : "bg-danger")">
-                                                @(book.IsAvailable ? "Available" : "Unavailable")
-                                            </span>
-                                        </div>
-                                    </div>
+        <!-- SEARCH -->
+        <form asp-action="BrowseBooks" method="get" class="d-flex mt-2 mt-md-0">
+            <input type="text" name="search" placeholder="Search by title or author..."
+                   value="@searchQuery"
+                   class="form-control search-input me-2" />
 
-                                    <div class="mt-auto d-flex gap-2">
-                                        <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-outline-info btn-sm flex-fill">
-                                            <i class="bi bi-eye"></i> Details
-                                        </a>
+            <input type="hidden" name="department" value="@selectedDepartment" />
+            <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
 
-                                        @if (isLoggedIn)
-                                        {
-                                            if (book.IsAvailable)
-                                            {
-                                                <form asp-action="RequestIssue" asp-controller="Books" method="post" class="m-0 flex-fill">
-                                                    <input type="hidden" name="id" value="@book.Id" />
-                                                    <button type="submit" class="btn btn-success btn-sm w-100">
-                                                        <i class="bi bi-cart-plus"></i> Add
-                                                    </button>
-                                                </form>
-                                            }
-                                            else
-                                            {
-                                                <button class="btn btn-secondary btn-sm w-100" disabled><i class="bi bi-x-circle"></i> Not Available</button>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <a href="~/Account/Login" class="btn btn-outline-light btn-sm w-100" title="Login to add">
-                                                <i class="bi bi-box-arrow-in-right"></i> Login to add
-                                            </a>
-                                        }
-                                    </div>
-                                </div>
+    <!-- DEPARTMENT FILTERS -->
+    <div class="d-flex gap-2 flex-wrap mb-4">
+        @foreach (var dept in new[] { "All", "CSE", "IT", "Mechanical", "Civil", "Chemical" })
+        {
+            <a href="?department=@dept&search=@searchQuery"
+               class="dept-pill @(selectedDepartment == dept ? "active-pill" : "")">
+                @dept
+            </a>
+        }
+    </div>
+
+    <!-- BOOK GRID -->
+    <div class="row g-4">
+        @if (!Model.Any())
+        {
+            <div class="col-12">
+                <div class="alert alert-info text-center">No books found for this filter.</div>
+            </div>
+        }
+        else
+        {
+            foreach (var book in Model)
+            {
+                var imagePath = book.ImageList?.FirstOrDefault() ?? "/images/books/default-book.png";
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="book-card shadow-lg">
+
+                        <div class="book-img-wrapper">
+                            <img src="@imagePath" alt="@book.Title"
+                                 onerror="this.src='/images/books/default-book.png';"
+                                 class="book-img" />
+                            <div class="img-gradient"></div>
+                        </div>
+
+                        <div class="book-info">
+                            <h5 class="book-title">@book.Title</h5>
+                            <p class="book-author"><i class="bi bi-person"></i> @book.Author</p>
+
+                            <span class="badge @(book.IsAvailable ? "bg-success" : "bg-danger")">
+                                @(book.IsAvailable ? "Available" : "Issued")
+                            </span>
+
+                            <div class="mt-3 d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@book.Id"
+                                   class="btn btn-outline-info btn-sm w-100">
+                                    <i class="bi bi-eye"></i> Details
+                                </a>
+
+                                @if (isLoggedIn)
+                                {
+                                    if (book.IsAvailable)
+                                    {
+                                        <form asp-action="RequestIssue" method="post" class="w-100">
+                                            <input type="hidden" name="id" value="@book.Id" />
+                                            <button class="btn btn-success btn-sm w-100">
+                                                <i class="bi bi-plus-circle"></i> Add
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-secondary btn-sm w-100" disabled>
+                                            Not Available
+                                        </button>
+                                    }
+                                }
+                                else
+                                {
+                                    <a href="/Account/Login"
+                                       class="btn btn-outline-light btn-sm w-100">
+                                        Login to add
+                                    </a>
+                                }
                             </div>
                         </div>
-                    }
-                }
-            </div>
-        </div>
 
+                    </div>
+                </div>
+            }
+        }
     </div>
 </div>
 
-@section Styles {
-    <style>
-        :root{
-            --glass-bg: rgba(255,255,255,0.06);
-            --glass-border: rgba(255,255,255,0.08);
-            --accent: #5eead4;
-            --muted-dark: rgba(230,238,248,0.78);
-            --muted-light: rgba(34,43,69,0.82);
-        }
+<!-- STYLES -->
+<style>
 
-        /* Background image layer (your uploaded image) */
-        .bg-photo{
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background: url('/images/library-bg.jpg') center/cover no-repeat;
-            filter: blur(6px) saturate(110%);
-            transform: scale(1.02);
-            will-change: transform, filter;
-        }
+    /* Background Image */
+    .bg-blur {
+        position: fixed;
+        inset: 0;
+        background: url('/images/library-bg.jpg') center/cover no-repeat;
+        filter: blur(8px) brightness(65%);
+        z-index: 0;
+    }
 
-        /* overlay to ensure readability */
-        .bg-overlay{
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-            background: linear-gradient(180deg, rgba(12,18,32,0.55), rgba(8,12,22,0.55));
-            backdrop-filter: blur(2px);
-        }
+    .bg-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.55);
+        z-index: 1;
+    }
 
-        .app-wrapper{
-            min-height:100vh;
-            padding-bottom:40px;
-            position: relative;
-            z-index: 2;
-        }
+    /* Search Input */
+    .search-input {
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.25);
+        color: #fff;
+        border-radius: 8px;
+    }
 
-        /* Controls */
-        .controls-bar { color: var(--muted-dark); }
-        .page-heading .bi { color: #60c5ff; margin-right:6px; font-size:1.25rem; }
+    .search-input::placeholder { color: #eee; }
 
-        .control-search{
-            min-width:300px;
-            background: rgba(255,255,255,0.07);
-            border:1px solid rgba(255,255,255,0.10);
-            color: var(--muted-dark);
-            border-radius:8px;
-            padding:8px 12px;
-            box-shadow: 0 4px 18px rgba(2,6,23,0.35);
-        }
+    /* Department Pills */
+    .dept-pill {
+        padding: 7px 16px;
+        border-radius: 30px;
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: white;
+        text-decoration: none;
+        transition: 0.2s;
+        font-size: 0.9rem;
+    }
 
-        /* Pill filters */
-        .pill{
-            padding:8px 14px;
-            border-radius:999px;
-            background: rgba(255,255,255,0.05);
-            color:var(--muted-dark);
-            border:1px solid rgba(255,255,255,0.06);
-            text-decoration:none;
-            transition: all .18s;
-            box-shadow: 0 6px 18px rgba(2,6,23,0.35);
-        }
-        .pill:hover{ transform: translateY(-3px); }
-        .active-pill{ background: rgba(255,255,255,0.09); box-shadow: 0 20px 50px rgba(2,6,23,0.6); }
+    .dept-pill:hover {
+        background: rgba(255,255,255,0.25);
+    }
 
-        /* Glass card */
-        .glass-card {
-            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-            border: 1px solid rgba(255,255,255,0.10);
-            border-radius: 14px;
-            backdrop-filter: blur(10px) saturate(120%);
-            overflow: hidden;
-            transition: transform .25s ease, box-shadow .25s ease;
-            height:100%;
-            box-shadow: 0 8px 28px rgba(2,6,23,0.45);
-        }
-        .glass-card:hover { transform: translateY(-8px); box-shadow: 0 28px 80px rgba(2,6,23,0.75); }
+    .active-pill {
+        background: #00c3ff;
+        color: black !important;
+        font-weight: bold;
+        border-color: #00c3ff;
+    }
 
-        .card-media{ height:260px; overflow:hidden; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; }
-        .book-img { width:100%; height:100%; object-fit:cover; transition: transform .45s ease; }
-        .glass-card:hover .book-img { transform: scale(1.06); }
+    /* Book Card */
+    .book-card {
+        background: rgba(255,255,255,0.07);
+        border-radius: 14px;
+        overflow: hidden;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.15);
+        transition: 0.3s;
+    }
 
-        .book-title { color: #eaf6ff; font-size:1.03rem; margin-bottom:0; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; max-width:75%; }
-        .book-author { color: var(--muted-dark); font-size: 0.9rem; }
+    .book-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
 
-        /* Responsive List mode styles (applied by JS by toggling class .list-view on #booksArea) */
-        #booksArea.list-view .book-item { flex:1 1 100%; }
-        #booksArea.list-view .book-card { display:flex; flex-direction:row; height:150px; }
-        #booksArea.list-view .card-media { width:180px; height:100%; }
-        #booksArea.list-view .card-body { padding:12px; }
+    .book-img-wrapper {
+        height: 250px;
+        position: relative;
+        overflow: hidden;
+    }
 
-        /* Card sizes */
-        .size-sm .card-media { height:160px; }
-        .size-md .card-media { height:260px; }
-        .size-lg .card-media { height:360px; }
+    .book-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.4s;
+    }
 
-        /* Buttons styling overrides */
-        .btn-outline-info { color:#0ea5ff; border-color: rgba(14,165,255,0.12); background: rgba(14,165,255,0.04); }
-        .btn-outline-light { color: #eaf6ff; border-color: rgba(255,255,255,0.06); }
+    .book-card:hover .book-img { transform: scale(1.08); }
 
-        /* small screens */
-        @@media (max-width:767.98px){
-            .control-search{ min-width:150px; }
-            .card-media{ height:200px; }
-            .container { padding-left: 12px; padding-right: 12px; }
-        }
-    </style>
-}
+    /* Gradient on Image for readability */
+    .img-gradient {
+        position: absolute;
+        bottom: 0;
+        height: 55%;
+        width: 100%;
+        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    }
 
-@section Scripts {
-    <script>
-        (function(){
-            const booksArea = document.getElementById('booksArea');
-            const viewBtns = document.querySelectorAll('.view-btn');
-            const sizeBtns = document.querySelectorAll('.size-btn');
-            const themeSwitch = document.getElementById('themeSwitch');
+    .book-info {
+        padding: 15px;
+    }
 
-            // default classes
-            function setSize(size){
-                document.querySelectorAll('.book-card').forEach(c => {
-                    c.classList.remove('size-sm','size-md','size-lg');
-                    c.classList.add('size-'+size);
-                });
-            }
+    .book-title {
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-bottom: 3px;
+        text-shadow: 0 2px 4px black;
+    }
 
-            // View toggle
-            viewBtns.forEach(b => b.addEventListener('click', function(){
-                viewBtns.forEach(x=>x.classList.remove('active'));
-                this.classList.add('active');
-                const v = this.getAttribute('data-view');
-                if(v === 'list'){
-                    booksArea.classList.add('list-view');
-                } else {
-                    booksArea.classList.remove('list-view');
-                }
-            }));
+    .book-author {
+        color: #ddd;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        text-shadow: 0 1px 2px black;
+    }
 
-            // Size toggle
-            sizeBtns.forEach(b => b.addEventListener('click', function(){
-                sizeBtns.forEach(x=>x.classList.remove('active'));
-                this.classList.add('active');
-                const s = this.getAttribute('data-size');
-                setSize(s);
-            }));
-
-            // Theme toggle (Dark/Light)
-            themeSwitch.addEventListener('change', function(){
-                if(this.checked){
-                    // Dark: restore overlay
-                    document.querySelector('.bg-overlay').style.background = 'linear-gradient(180deg, rgba(12,18,32,0.55), rgba(8,12,22,0.55))';
-                    document.querySelectorAll('.glass-card').forEach(c => {
-                        c.style.background = 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03))';
-                        c.style.border = '1px solid rgba(255,255,255,0.10)';
-                    });
-                    document.querySelector('body').style.color = '';
-                } else {
-                    // Light: lighten overlay and cards
-                    document.querySelector('.bg-overlay').style.background = 'linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.55))';
-                    document.querySelectorAll('.glass-card').forEach(c => {
-                        c.style.background = 'linear-gradient(180deg,#ffffff,#fbfcfe)';
-                        c.style.border = '1px solid rgba(15,23,42,0.04)';
-                    });
-                    document.querySelector('body').style.color = '#0b1220';
-                }
-            });
-
-            // set defaults on DOM ready
-            document.addEventListener('DOMContentLoaded', function(){
-                // default medium size
-                document.querySelector('.size-btn[data-size="md"]').click();
-                // default grid view
-                document.querySelector('.view-btn[data-view="grid"]').click();
-                // theme switch is checked by default (dark)
-                themeSwitch.checked = true;
-            });
-
-        })();
-    </script>
-}
+</style>
