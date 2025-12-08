@@ -55,7 +55,7 @@ namespace LibraryManagementSystem.Controllers
             return View("IssueBookForm", book);
         }
 
-
+    
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult IssueBook(int bookId)
