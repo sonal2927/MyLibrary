@@ -111,7 +111,7 @@ namespace LibraryManagementSystem.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "✅ Book added successfully!";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(BrowseBooks));
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -141,7 +141,7 @@ namespace LibraryManagementSystem.Controllers
                 throw;
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(BrowseBooks));
         }
 
         public async Task<IActionResult> Delete(int? id)
@@ -163,7 +163,7 @@ namespace LibraryManagementSystem.Controllers
                 TempData["Success"] = "🗑️ Book deleted successfully!";
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(BrowseBooks));
         }
 
         [HttpGet]
