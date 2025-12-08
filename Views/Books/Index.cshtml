@@ -1,217 +1,183 @@
 @model IEnumerable<LibraryManagementSystem.Models.Book>
+@using Microsoft.AspNetCore.Http
 
 @{
-    ViewData["Title"] = "Browse Books";
+    ViewData["Title"] = "Explore Library Books";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var role = Context.Session.GetString("UserRole");
+    var selectedCategory = Context.Request.Query["category"].ToString();
+    var searchQuery = Context.Request.Query["search"].ToString();
+    var categories = ViewBag.Categories as List<string> ?? new List<string>();
     var isLoggedIn = Context.Session.GetString("LoginId") != null;
 }
 
-<div class="page-bg"></div>
+<div class="app-wrapper">
 
-<div class="container my-5 position-relative" style="z-index:2;">
+    <div class="container py-4">
 
-    <!-- 🌟 Page Title -->
-    <h2 class="text-center text-light fw-bold mb-4">
-        <i class="bi bi-book-half"></i> Browse Books by Department
-    </h2>
+        <!-- header -->
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+            <div>
+                <h2 class="h4 page-heading mb-1">📚 Explore <span class="text-muted">Library Books</span></h2>
+                <p class="small text-muted mb-0">Find books by category, author, or title</p>
+            </div>
 
-    <!-- 🔍 Search Bar -->
-    <form asp-action="BrowseBooks" method="get" class="row justify-content-center mb-4">
-        <div class="col-md-6 d-flex">
-            <input type="text" name="search" class="form-control search-box me-2"
-                   placeholder="Search by book, author, or keywords..." />
-            <button type="submit" class="btn btn-primary shadow-sm px-4">
-                <i class="bi bi-search"></i>
-            </button>
+            @if (role == "Librarian")
+            {
+                <a asp-action="Create" asp-controller="Books" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Add New Book
+                </a>
+            }
         </div>
-    </form>
 
-    <!-- 🏷 Department Filters -->
-    <div class="d-flex justify-content-center mb-4 flex-wrap gap-2">
-        <a href="?department=All" class="filter-btn">All</a>
-        <a href="?department=CSE" class="filter-btn cse">CSE</a>
-        <a href="?department=IT" class="filter-btn it">IT</a>
-        <a href="?department=Mechanical" class="filter-btn mecha">Mechanical</a>
-        <a href="?department=Civil" class="filter-btn civil">Civil</a>
-        <a href="?department=Chemical" class="filter-btn chem">Chemical</a>
-    </div>
-
-    <!-- 📚 Book Cards -->
-    <div class="row">
-        @foreach (var book in Model)
+        <!-- toasts -->
+        @if (TempData["Success"] != null)
         {
-            var imagePath = book.ImageList.FirstOrDefault() ?? "/images/books/default-book.png";
+            <div class="alert alert-success rounded-3">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger rounded-3">@TempData["Error"]</div>
+        }
 
-            <div class="col-md-4 mb-4">
-                <div class="book-card shadow-lg">
+        <!-- search & filters (using same controls) -->
+        <form asp-action="BrowseBooks" method="get" class="row g-3 mb-4 align-items-end bg-light p-3 rounded-3 shadow-sm">
+            <div class="col-md-3">
+                <label class="form-label fw-bold text-secondary">Category</label>
+                <select class="form-select" name="category">
+                    <option value="">All Categories</option>
+                    @foreach (var cat in categories)
+                    {
+                        <option value="@cat" selected="@(cat == selectedCategory)">@cat</option>
+                    }
+                </select>
+            </div>
 
-                    <!-- 📘 Image -->
-                    <div class="img-holder">
-                        <img src="@imagePath"
-                             onerror="this.onerror=null; this.src='/images/books/default-book.png';"
-                             class="book-img" />
-                    </div>
-
-                    <!-- 📑 Content -->
-                    <div class="p-3">
-
-                        <h5 class="fw-bold book-title">@book.Title</h5>
-
-                        <p class="text-muted small mb-2">
-                            <i class="bi bi-person"></i> @book.Author
-                        </p>
-
-                        <!-- Status -->
-                        <span class="status-badge @(book.IsAvailable ? "available" : "unavailable")">
-                            @(book.IsAvailable ? "Available" : "Unavailable")
-                        </span>
-
-                        <!-- ℹ️ Details Button (Round Icon) -->
-                        <div class="text-end mt-3">
-                            <a asp-action="Details" asp-route-id="@book.Id" class="details-btn">
-                                <i class="bi bi-info-circle-fill"></i>
-                            </a>
-                        </div>
-
-                    </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary">Search</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" value="@searchQuery" class="form-control" placeholder="Search by Title or Author" />
                 </div>
             </div>
-        }
+
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+        </form>
+
+        <!-- books grid (same cards) -->
+        <div id="booksArea" class="row g-4">
+            @if (!Model.Any())
+            {
+                <div class="col-12"><div class="alert alert-info">No books found.</div></div>
+            }
+            else
+            {
+                foreach (var book in Model)
+                {
+                    var imagePath = book.ImageList?.FirstOrDefault() ?? "/images/books/default-book.png";
+                    <div class="col-md-4 book-item">
+                        <div class="glass-card card book-card h-100">
+                            <div class="card-media">
+                                <img src="@imagePath" onerror="this.onerror=null; this.src='/images/books/default-book.png';" class="book-img" alt="@book.Title" />
+                            </div>
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="book-title mb-1">@book.Title</h5>
+                                <p class="small text-muted mb-1"><i class="bi bi-person"></i> <strong>Author:</strong> @book.Author</p>
+                                <p class="small text-muted mb-1"><i class="bi bi-tags"></i> <strong>Category:</strong> @book.Department</p>
+
+                                <p class="mb-2">
+                                    <strong>Status:</strong>
+                                    @if (book.IsAvailable)
+                                    {
+                                        <span class="badge bg-success">Available</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Issued</span>
+                                    }
+                                </p>
+
+                                <div class="mt-auto d-grid gap-2">
+                                    <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@book.Id">👁 View Details</a>
+
+                                    @if (role == "Student" || role == "Faculty")
+                                    {
+                                        if (book.IsAvailable)
+                                        {
+                                            <form asp-action="IssueBookForm" asp-route-id="@book.Id" method="get">
+                                                <button type="submit" class="btn btn-success btn-sm">📖 Issue Book</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-secondary btn-sm" disabled>❌ Not Available</button>
+                                        }
+                                    }
+
+                                    @if (role == "Librarian")
+                                    {
+                                        <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@book.Id">🗑 Delete</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
     </div>
 </div>
 
-
+<!-- Reuse the same Styles + Scripts used in BrowseBooks -->
 @section Styles {
-<style>
+    <style>
+        :root{
+            --glass-bg: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,255,255,0.08);
+            --accent: #5eead4;
+            --muted: rgba(15,23,42,0.7);
+        }
 
-    /* 🌌 PREMIUM DARK GRADIENT BACKGROUND */
-    .page-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background: linear-gradient(135deg, #0a0f24 0%, #1b2550 40%, #2c1b47 100%);
-        background-size: cover;
-        z-index: 1;
-        opacity: 0.75;
-    }
+        .app-wrapper{
+            min-height:100vh;
+            background: linear-gradient(135deg,#07112a 0%, #0b1b3a 40%, #0f1a2f 100%);
+            padding-bottom:40px;
+        }
 
-    /* ----------------------------------------
-       SEARCH BOX
-    ---------------------------------------- */
-    .search-box {
-        border-radius: 10px;
-        padding: 10px 14px;
-        border: 1px solid #d0d0d0;
-    }
+        .page-heading .bi { color: #60c5ff; margin-right:6px; font-size:1.25rem; }
 
-    /* ----------------------------------------
-       FILTER BUTTONS CLEAN LOOK
-    ---------------------------------------- */
-    .filter-btn {
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 14px;
-        text-decoration: none !important;
-        color: white;
-        border: 1px solid rgba(255,255,255,0.4);
-        backdrop-filter: blur(8px);
-        background: rgba(255,255,255,0.08);
-        transition: 0.3s;
-    }
+        .glass-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            backdrop-filter: blur(8px) saturate(120%);
+            overflow: hidden;
+            transition: transform .25s ease, box-shadow .25s ease;
+            height:100%;
+        }
+        .glass-card:hover { transform: translateY(-8px); box-shadow: 0 18px 50px rgba(2,6,23,0.7); }
 
-    .filter-btn:hover {
-        background: #0d6efd;
-        color: white;
-        border-color: #0d6efd;
-        transform: translateY(-2px);
-    }
+        .card-media{ height:230px; overflow:hidden; }
+        .book-img { width:100%; height:100%; object-fit:cover; transition: transform .45s ease; }
+        .glass-card:hover .book-img { transform: scale(1.06); }
 
-    .cse { border-color: #6ea8fe; }
-    .it { border-color: #98e0b5; }
-    .mecha { border-color: #ffe58f; }
-    .civil { border-color: #8eeaff; }
-    .chem { border-color: #ffb3b8; }
+        .book-title { color: #eaf6ff; font-size:1.02rem; margin-bottom:0; }
 
-    /* ----------------------------------------
-       BOOK CARD
-    ---------------------------------------- */
+        @@media (max-width:767.98px){
+            .card-media{ height:200px; }
+        }
+    </style>
+}
 
-    .book-card {
-        border-radius: 16px;
-        background: rgba(255,255,255,0.12);
-        backdrop-filter: blur(12px);
-        transition: all 0.3s ease;
-        overflow: hidden;
-        height: 100%;
-        border: 1px solid rgba(255,255,255,0.15);
-    }
-
-    .book-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
-
-    /* Image styling */
-    .img-holder {
-        height: 250px;
-        overflow: hidden;
-    }
-
-    .book-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: 0.4s ease;
-    }
-
-    .book-card:hover .book-img {
-        transform: scale(1.07);
-    }
-
-    /* Title clean design */
-    .book-title {
-        color: white;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    .text-muted {
-        color: #cfcfcf !important;
-    }
-
-    /* Status badges */
-    .status-badge {
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-size: 13px;
-    }
-    .available {
-        background: #d4f4d7;
-        color: #157347;
-    }
-    .unavailable {
-        background: #f8d7da;
-        color: #b02a37;
-    }
-
-    /* ℹ️ Details icon button */
-    .details-btn {
-        background: #0d6efd;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 50%;
-        display: inline-block;
-        font-size: 18px;
-        transition: 0.3s ease;
-    }
-
-    .details-btn:hover {
-        background: #0b5ed7;
-        transform: scale(1.1);
-    }
-
-</style>
+@section Scripts {
+    <script>
+        (function(){
+            // small shared helpers for toggles (same as BrowseBooks)
+            const booksArea = document.getElementById('booksArea');
+            // no toggles here by default; you can reuse toggles from BrowseBooks if desired
+        })();
+    </script>
 }

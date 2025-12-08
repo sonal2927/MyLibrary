@@ -1,160 +1,277 @@
 @model IEnumerable<LibraryManagementSystem.Models.Book>
-@using Microsoft.AspNetCore.Http
 
 @{
-    ViewData["Title"] = "Explore Library Books";
-    var role = Context.Session.GetString("UserRole");
-    var selectedCategory = Context.Request.Query["category"];
-    var searchQuery = Context.Request.Query["search"];
-    var categories = ViewBag.Categories as List<string> ?? new List<string>();
+    ViewData["Title"] = "Browse Books";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var isLoggedIn = Context.Session.GetString("LoginId") != null;
+    var selectedDepartment = Context.Request.Query["department"].ToString();
+    var searchQuery = Context.Request.Query["search"].ToString();
 }
 
-<div class="container mt-4">
+<div class="app-wrapper">
 
-    <!-- 🔝 Heading + Add Book Button -->
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-        <div>
-            <h2 class="fw-bold text-primary mb-0">
-                📚 Explore <span class="text-dark">Library Books</span>
-            </h2>
-            <p class="text-muted mb-0">Find books by category, author, or title</p>
-        </div>
-
-        @if (role == "Librarian")
-        {
-            <a asp-action="Create" asp-controller="Books" class="btn btn-success shadow-sm mt-2 mt-md-0">
-                <i class="bi bi-plus-circle"></i> Add New Book
-            </a>
-        }
-    </div>
-
-    <!-- ✅ Toast Messages -->
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success shadow-sm rounded-3">
-            ✅ @TempData["Success"]
-        </div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger shadow-sm rounded-3">
-            ❌ @TempData["Error"]
-        </div>
-    }
-
-    <!-- 🔍 Search & Filter -->
-    <form asp-action="BrowseBooks" method="get" class="row g-3 mb-4 align-items-end bg-light p-3 rounded-3 shadow-sm">
-        <div class="col-md-3">
-            <label class="form-label fw-bold text-secondary">Category</label>
-            <select class="form-select shadow-sm" name="category">
-                <option value="">All Categories</option>
-                @foreach (var cat in categories)
-                {
-                    <option value="@cat" selected="@(cat == selectedCategory)">
-                        @cat
-                    </option>
-                }
-            </select>
-        </div>
-
-        <div class="col-md-6">
-            <label class="form-label fw-bold text-secondary">Search</label>
-            <div class="input-group shadow-sm">
-                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                <input type="text" name="search" value="@searchQuery" class="form-control" placeholder="Search by Title or Author" />
+    <!-- Top controls -->
+    <div class="controls-bar container py-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start">
+            <div>
+                <h2 class="h4 page-heading mb-1"><i class="bi bi-book-half"></i> Browse Books</h2>
+                <p class="text-muted mb-0 small">By Department — filter, switch layout, and add if you're logged in.</p>
             </div>
-        </div>
 
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-primary w-100 shadow-sm">
-                <i class="bi bi-search"></i> Search
-            </button>
-        </div>
-    </form>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+                <!-- Search -->
+                <form asp-action="BrowseBooks" method="get" class="d-flex align-items-center">
+                    <input type="text" name="search" class="form-control control-search me-2" placeholder="Search by title or author..." value="@searchQuery" />
+                    <input type="hidden" name="department" value="@selectedDepartment" />
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                </form>
 
-    <!-- 📚 Book Cards -->
-    <div class="row">
-        @if (!Model.Any())
-        {
-            <div class="col-12 text-center">
-                <div class="alert alert-info shadow-sm rounded-3">
-                    📭 No books found. Try changing filters or search keywords.
+                <!-- Size -->
+                <div class="btn-group btn-group-sm" role="group" aria-label="Size">
+                    <button type="button" class="btn btn-outline-light size-btn active" data-size="md" title="Medium"><i class="bi bi-aspect-ratio"></i></button>
+                    <button type="button" class="btn btn-outline-light size-btn" data-size="lg" title="Large"><i class="bi bi-aspect-ratio-fill"></i></button>
+                    <button type="button" class="btn btn-outline-light size-btn" data-size="sm" title="Small"><i class="bi bi-square"></i></button>
+                </div>
+
+                <!-- View -->
+                <div class="btn-group btn-group-sm ms-2" role="group" aria-label="View">
+                    <button type="button" class="btn btn-outline-light view-btn active" data-view="grid" title="Grid"><i class="bi bi-grid-3x3-gap-fill"></i></button>
+                    <button type="button" class="btn btn-outline-light view-btn" data-view="list" title="List"><i class="bi bi-list"></i></button>
+                </div>
+
+                <!-- Theme -->
+                <div class="form-check form-switch ms-2">
+                    <input class="form-check-input" type="checkbox" id="themeSwitch" checked />
+                    <label class="form-check-label small" for="themeSwitch">Dark</label>
                 </div>
             </div>
-        }
-        else
-        {
-            @foreach (var book in Model)
+        </div>
+
+        <!-- Departments filter (keeps original links) -->
+        <div class="mt-3 d-flex gap-2 flex-wrap justify-content-center">
+            <a href="?department=All&search=@searchQuery" class="pill @(selectedDepartment == "All" ? "active-pill" : "")">All</a>
+            <a href="?department=CSE&search=@searchQuery" class="pill @(selectedDepartment == "CSE" ? "active-pill" : "")">CSE</a>
+            <a href="?department=IT&search=@searchQuery" class="pill @(selectedDepartment == "IT" ? "active-pill" : "")">IT</a>
+            <a href="?department=Mechanical&search=@searchQuery" class="pill @(selectedDepartment == "Mechanical" ? "active-pill" : "")">Mechanical</a>
+            <a href="?department=Civil&search=@searchQuery" class="pill @(selectedDepartment == "Civil" ? "active-pill" : "")">Civil</a>
+            <a href="?department=Chemical&search=@searchQuery" class="pill @(selectedDepartment == "Chemical" ? "active-pill" : "")">Chemical</a>
+        </div>
+    </div>
+
+    <!-- Books area -->
+    <div class="container py-3">
+        <div id="booksArea" class="row g-4">
+            @if (!Model.Any())
             {
-                var imagePath = book.ImageList?.FirstOrDefault() ?? "/images/books/default-book.png";
+                <div class="col-12">
+                    <div class="alert alert-info">No books found. Try different filters or search terms.</div>
+                </div>
+            }
+            else
+            {
+                foreach (var book in Model)
+                {
+                    var imagePath = book.ImageList?.FirstOrDefault() ?? "/images/books/default-book.png";
+                    <div class="col-lg-4 col-md-6 book-item">
+                        <div class="glass-card card book-card h-100">
+                            <div class="card-media">
+                                <img src="@imagePath" onerror="this.onerror=null; this.src='/images/books/default-book.png';" alt="@book.Title" class="book-img" />
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between mb-2 align-items-start">
+                                    <div>
+                                        <h5 class="book-title mb-1" title="@book.Title">@book.Title</h5>
+                                        <p class="book-author small text-muted mb-0"><i class="bi bi-person"></i> @book.Author</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge @(book.IsAvailable ? "bg-success" : "bg-danger")">
+                                            @(book.IsAvailable ? "Available" : "Unavailable")
+                                        </span>
+                                    </div>
+                                </div>
 
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-lg rounded-4 border-0 book-card">
-                        <img src="@imagePath"
-                             onerror="this.onerror=null; this.src='/images/books/default-book.png';"
-                             class="card-img-top rounded-top-4"
-                             alt="@book.Title"
-                             style="height: 230px; object-fit: cover;" />
+                                <div class="mt-auto d-flex gap-2">
+                                    <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-outline-info btn-sm flex-fill">
+                                        <i class="bi bi-eye"></i> Details
+                                    </a>
 
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title fw-bold text-primary">@book.Title</h5>
-                            <p class="card-text text-muted mb-1">
-                                <i class="bi bi-person"></i> <strong>Author:</strong> @book.Author
-                            </p>
-                            <p class="card-text mb-1">
-                                <i class="bi bi-tags"></i> <strong>Category:</strong> @book.Department
-                            </p>
-                            <p class="card-text">
-                                <i class="bi bi-check-circle"></i> <strong>Status:</strong>
-                                @if (book.IsAvailable)
-                                {
-                                    <span class="badge bg-success">Available</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">Issued</span>
-                                }
-                            </p>
-
-                            <!-- Buttons -->
-                            <div class="mt-auto d-grid gap-2">
-                                <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@book.Id">👁 View Details</a>
-
-                                @if (role == "Student" || role == "Faculty")
-                                {
-                                    @if (book.IsAvailable)
+                                    @if (isLoggedIn)
                                     {
-                                        <form asp-action="IssueBookForm" asp-route-id="@book.Id" method="get">
-                                            <button type="submit" class="btn btn-success btn-sm">
-                                                📖 Issue Book
-                                            </button>
-                                        </form>
+                                        if (book.IsAvailable)
+                                        {
+                                            <form asp-action="RequestIssue" asp-controller="Books" method="post" class="m-0 flex-fill">
+                                                <input type="hidden" name="id" value="@book.Id" />
+                                                <button type="submit" class="btn btn-success btn-sm w-100">
+                                                    <i class="bi bi-cart-plus"></i> Add
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-secondary btn-sm w-100" disabled><i class="bi bi-x-circle"></i> Not Available</button>
+                                        }
                                     }
                                     else
                                     {
-                                        <button class="btn btn-secondary btn-sm" disabled>
-                                            ❌ Not Available
-                                        </button>
+                                        <a href="~/Account/Login" class="btn btn-outline-light btn-sm w-100" title="Login to add">
+                                            <i class="bi bi-box-arrow-in-right"></i> Login to add
+                                        </a>
                                     }
-                                }
-
-                                @if (role == "Librarian")
-                                {
-                                    <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@book.Id">🗑 Delete</a>
-                                }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             }
-        }
+        </div>
     </div>
+
 </div>
 
-<style>
-    .book-card:hover {
-        transform: translateY(-4px);
-        transition: all 0.3s ease-in-out;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-</style>
+@section Styles {
+    <style>
+        :root{
+            --glass-bg: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,255,255,0.08);
+            --accent: #5eead4;
+            --muted: rgba(230,238,248,0.7);
+        }
+
+        /* Page wrapper sets gradient */
+        .app-wrapper{
+            min-height:100vh;
+            background: linear-gradient(135deg,#07112a 0%, #0b1b3a 40%, #0f1a2f 100%);
+            padding-bottom:40px;
+        }
+
+        .controls-bar { color: var(--muted); }
+
+        .page-heading .bi { color: #60c5ff; margin-right:6px; font-size:1.25rem; }
+
+        .control-search{
+            min-width:300px;
+            background: rgba(255,255,255,0.03);
+            border:1px solid rgba(255,255,255,0.06);
+            color: var(--muted);
+            border-radius:8px;
+            padding:8px 12px;
+        }
+
+        /* Pill filters */
+        .pill{
+            padding:8px 14px;
+            border-radius:999px;
+            background: rgba(255,255,255,0.03);
+            color:var(--muted);
+            border:1px solid rgba(255,255,255,0.05);
+            text-decoration:none;
+            transition: all .18s;
+        }
+        .pill:hover{ transform: translateY(-3px); }
+        .active-pill{ background: rgba(255,255,255,0.06); box-shadow: 0 6px 18px rgba(2,6,23,0.6); }
+
+        /* Glass card */
+        .glass-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            backdrop-filter: blur(8px) saturate(120%);
+            overflow: hidden;
+            transition: transform .25s ease, box-shadow .25s ease;
+            height:100%;
+        }
+        .glass-card:hover { transform: translateY(-8px); box-shadow: 0 18px 50px rgba(2,6,23,0.7); }
+
+        .card-media{ height:250px; overflow:hidden; }
+        .book-img { width:100%; height:100%; object-fit:cover; transition: transform .45s ease; }
+        .glass-card:hover .book-img { transform: scale(1.06); }
+
+        .book-title { color: #eaf6ff; font-size:1.02rem; margin-bottom:0; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; max-width:75%; }
+        .book-author { color: var(--muted); }
+
+        /* Responsive List mode styles (applied by JS by toggling class .list-view on #booksArea) */
+        #booksArea.list-view .book-item { flex:1 1 100%; }
+        #booksArea.list-view .book-card { display:flex; flex-direction:row; height:140px; }
+        #booksArea.list-view .card-media { width:180px; height:100%; }
+        #booksArea.list-view .card-body { padding:12px; }
+
+        /* Card sizes */
+        .size-sm .card-media { height:160px; }
+        .size-md .card-media { height:250px; }
+        .size-lg .card-media { height:340px; }
+
+        /* Buttons styling overrides */
+        .btn-outline-info { color:#0ea5ff; border-color: rgba(14,165,255,0.12); background: rgba(14,165,255,0.04); }
+        .btn-outline-light { color: #eaf6ff; border-color: rgba(255,255,255,0.06); }
+
+        /* small screens */
+        @@media (max-width:767.98px){
+            .control-search{ min-width:150px; }
+            .card-media{ height:200px; }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        (function(){
+            const booksArea = document.getElementById('booksArea');
+            const viewBtns = document.querySelectorAll('.view-btn');
+            const sizeBtns = document.querySelectorAll('.size-btn');
+            const themeSwitch = document.getElementById('themeSwitch');
+
+            // default classes
+            function setSize(size){
+                document.querySelectorAll('.book-card').forEach(c => {
+                    c.classList.remove('size-sm','size-md','size-lg');
+                    c.classList.add('size-'+size);
+                });
+            }
+
+            // View toggle
+            viewBtns.forEach(b => b.addEventListener('click', function(){
+                viewBtns.forEach(x=>x.classList.remove('active'));
+                this.classList.add('active');
+                const v = this.getAttribute('data-view');
+                if(v === 'list'){
+                    booksArea.classList.add('list-view');
+                } else {
+                    booksArea.classList.remove('list-view');
+                }
+            }));
+
+            // Size toggle
+            sizeBtns.forEach(b => b.addEventListener('click', function(){
+                sizeBtns.forEach(x=>x.classList.remove('active'));
+                this.classList.add('active');
+                const s = this.getAttribute('data-size');
+                setSize(s);
+            }));
+
+            // Theme toggle (Dark/Light)
+            themeSwitch.addEventListener('change', function(){
+                if(this.checked){
+                    document.querySelector('.app-wrapper').style.background = 'linear-gradient(135deg,#07112a 0%, #0b1b3a 40%, #0f1a2f 100%)';
+                } else {
+                    document.querySelector('.app-wrapper').style.background = 'linear-gradient(135deg,#f6f8fb 0%, #eef3fb 60%)';
+                    // slight light-mode tweaks for cards
+                    document.querySelectorAll('.glass-card').forEach(c => {
+                        c.style.background = 'linear-gradient(180deg,#ffffff,#fbfcfe)';
+                        c.style.border = '1px solid rgba(15,23,42,0.04)';
+                    });
+                }
+            });
+
+            // set defaults on DOM ready
+            document.addEventListener('DOMContentLoaded', function(){
+                // default medium size
+                document.querySelector('.size-btn[data-size="md"]').click();
+                // default grid view
+                document.querySelector('.view-btn[data-view="grid"]').click();
+                // theme switch is checked by default
+                themeSwitch.checked = true;
+            });
+
+        })();
+    </script>
+}
