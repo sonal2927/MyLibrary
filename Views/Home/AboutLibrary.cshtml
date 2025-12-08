@@ -4,135 +4,171 @@
 }
 
 @section Styles {
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-    <style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-        /* 🌤️ Premium Gradient Background */
-        body {
-            background: linear-gradient(to bottom right, #f8f9fb, #eef1f7);
-        }
+<style>
 
-        /* 🌟 Hero Section */
+    /* 🌤 Softer Premium Background */
+    body {
+        background: linear-gradient(to bottom right, #f4f6fb, #eef1f7);
+    }
+
+    /* 🌟 Floating Hero Card */
+    .about-hero {
+        max-width: 900px;
+        margin: 60px auto;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        border-radius: 25px;
+        padding: 70px 40px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 25px 40px rgba(0,0,0,0.15);
+        position: relative;
+    }
+
+    .about-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 25px;
+        padding: 2px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0));
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+    }
+
+    .about-hero h1 {
+        font-weight: 800;
+        letter-spacing: .5px;
+        margin-bottom: 15px;
+    }
+
+    /* Section Wrapper */
+    .about-section {
+        max-width: 1100px;
+        margin: auto;
+        padding-bottom: 70px;
+    }
+
+    /* 💎 Ultra-Premium Info Cards */
+    .info-box {
+        background: rgba(255,255,255,0.9);
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow:
+            0 8px 20px rgba(0,0,0,0.06),
+            0 15px 35px rgba(0,0,0,0.04);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(230,230,230,0.7);
+        transition: all 0.35s ease;
+    }
+
+    .info-box:hover {
+        transform: translateY(-6px);
+        box-shadow:
+            0 18px 40px rgba(0,0,0,0.08),
+            0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    /* Icon Badge */
+    .icon-badge {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #e8efff;
+        color: #2563eb;
+        font-size: 1.5rem;
+        margin-right: 12px;
+        box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
+    }
+
+    .info-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 18px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #1e40af;
+    }
+
+    ul li {
+        margin-bottom: 6px;
+    }
+
+    @@media (max-width: 768px) {
         .about-hero {
-            background: linear-gradient(to right, rgba(106, 17, 203, 0.80), rgba(37, 117, 252, 0.85)),
-                        url('@Url.Content("~/images/library-banner.jpg")') center/cover no-repeat;
-            color: white;
-            padding: 90px 20px;
-            text-align: center;
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.25);
-            backdrop-filter: blur(4px);
+            padding: 50px 25px;
+            margin: 40px 10px;
         }
-
-        .about-hero h1 {
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        /* 📦 Section Area */
-        .about-section {
-            padding: 70px 20px;
-        }
-
-        /* 💎 Premium Info Boxes */
-        .info-box {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(4px);
-            border-radius: 18px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-            padding: 32px;
-            margin-bottom: 35px;
-            transition: all 0.35s ease;
-            border: 1px solid rgba(255,255,255,0.5);
-        }
-
-        .info-box:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 26px rgba(0,0,0,0.12);
-        }
-
-        .info-box h4 {
-            color: #2563eb;
-            font-weight: 600;
-            margin-bottom: 18px;
-        }
-
-        .icon {
-            font-size: 1.5rem;
-            margin-right: 10px;
-            color: #2563eb;
-        }
-
-        /* Responsive Fix */
-        @@media (max-width: 768px) {
-            .about-hero h1 {
-                font-size: 1.8rem;
-            }
-        }
-    </style>
+    }
+</style>
 }
 
-<!-- 🌟 Hero Section -->
-<div class="about-hero" data-aos="fade-down">
-    <div class="container">
-        <h1 class="display-5 fw-bold">📚 About SVMIT College Library</h1>
-        <p class="lead mt-2">Empowering students and faculty with knowledge, resources & modern digital access.</p>
-    </div>
+<!-- 🌟 Floating Hero Card -->
+<div class="about-hero" data-aos="zoom-in">
+    <h1 class="display-6">📚 About SVMIT College Library</h1>
+    <p class="lead">Empowering students and faculty with knowledge, resources & modern digital access.</p>
 </div>
 
-<!-- 📘 Information Section -->
-<div class="about-section container">
+<!-- 📘 Info Section -->
+<div class="about-section row g-4">
 
-    <div class="row">
-
-        <!-- Left Column -->
-        <div class="col-md-6">
-
-            <!-- Mission -->
-            <div class="info-box" data-aos="fade-right">
-                <h4><i class="icon bi bi-bullseye"></i> Our Mission</h4>
-                <p>
-                    To provide seamless access to books, journals, and digital content — enhancing learning,
-                    research, and academic excellence across the institution.
-                </p>
+    <!-- Mission -->
+    <div class="col-md-6" data-aos="fade-up">
+        <div class="info-box">
+            <div class="info-header">
+                <div class="icon-badge"><i class="bi bi-bullseye"></i></div>
+                Our Mission
             </div>
-
-            <!-- Who Can Use -->
-            <div class="info-box" data-aos="fade-right" data-aos-delay="200">
-                <h4><i class="icon bi bi-person-check-fill"></i> Who Can Use</h4>
-                <p>
-                    Students, Faculty, Staff, and Administrators of SVMIT can explore, issue, request,
-                    and manage books through the digital platform.
-                </p>
-            </div>
-
-        </div>
-
-        <!-- Right Column -->
-        <div class="col-md-6">
-
-            <!-- Services -->
-            <div class="info-box" data-aos="fade-left">
-                <h4><i class="icon bi bi-gear-fill"></i> Services Offered</h4>
-                <ul>
-                    <li>🔍 Online Book Search & Request</li>
-                    <li>📚 Book Issuing & Returning</li>
-                    <li>📖 Reading History Tracking</li>
-                    <li>📬 Request New Books</li>
-                    <li>🛠 Admin & Librarian Management Panel</li>
-                </ul>
-            </div>
-
-            <!-- Timings -->
-            <div class="info-box" data-aos="fade-left" data-aos-delay="200">
-                <h4><i class="icon bi bi-clock-history"></i> Library Hours</h4>
-                <p><strong>Monday – Friday:</strong><br />8:30 AM – 4:00 PM</p>
-                <p><strong>Saturday:</strong><br />8:30 AM – 1:00 PM</p>
-            </div>
-
+            <p>To provide seamless access to books, journals, and digital content — enhancing research and academic excellence.</p>
         </div>
     </div>
+
+    <!-- Services -->
+    <div class="col-md-6" data-aos="fade-up" data-aos-delay="150">
+        <div class="info-box">
+            <div class="info-header">
+                <div class="icon-badge"><i class="bi bi-gear-fill"></i></div>
+                Services Offered
+            </div>
+            <ul>
+                <li>🔍 Online Book Search & Request</li>
+                <li>📚 Book Issuing & Returning</li>
+                <li>📖 Reading History Tracking</li>
+                <li>📬 Request New Books</li>
+                <li>🛠 Admin & Librarian Dashboards</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Who Can Use -->
+    <div class="col-md-6" data-aos="fade-up">
+        <div class="info-box">
+            <div class="info-header">
+                <div class="icon-badge"><i class="bi bi-people-fill"></i></div>
+                Who Can Use
+            </div>
+            <p>All students, faculty, staff, and administrators of SVMIT can access, explore, and request books.</p>
+        </div>
+    </div>
+
+    <!-- Library Hours -->
+    <div class="col-md-6" data-aos="fade-up" data-aos-delay="150">
+        <div class="info-box">
+            <div class="info-header">
+                <div class="icon-badge"><i class="bi bi-clock-history"></i></div>
+                Library Hours
+            </div>
+            <p><strong>Monday – Friday:</strong><br />8:30 AM – 4:00 PM</p>
+            <p><strong>Saturday:</strong><br />8:30 AM – 1:00 PM</p>
+        </div>
+    </div>
+
 </div>
