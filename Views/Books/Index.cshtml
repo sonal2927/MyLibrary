@@ -6,10 +6,12 @@
     var isLoggedIn = Context.Session.GetString("LoginId") != null;
 }
 
-<div class="container my-5">
+<div class="page-bg"></div>
+
+<div class="container my-5 position-relative" style="z-index:2;">
 
     <!-- 🌟 Page Title -->
-    <h2 class="text-center text-primary fw-bold mb-4">
+    <h2 class="text-center text-light fw-bold mb-4">
         <i class="bi bi-book-half"></i> Browse Books by Department
     </h2>
 
@@ -41,7 +43,7 @@
             var imagePath = book.ImageList.FirstOrDefault() ?? "/images/books/default-book.png";
 
             <div class="col-md-4 mb-4">
-                <div class="book-card shadow-sm">
+                <div class="book-card shadow-lg">
 
                     <!-- 📘 Image -->
                     <div class="img-holder">
@@ -80,114 +82,136 @@
 
 
 @section Styles {
-    <style>
+<style>
 
-        /* ----------------------------------------
-           SEARCH BOX
-        ---------------------------------------- */
-        .search-box {
-            border-radius: 10px;
-            padding: 10px 14px;
-            border: 1px solid #d0d0d0;
-        }
+    /* 🌌 PREMIUM DARK GRADIENT BACKGROUND */
+    .page-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, #0a0f24 0%, #1b2550 40%, #2c1b47 100%);
+        background-size: cover;
+        z-index: 1;
+        opacity: 0.75;
+    }
 
-        /* ----------------------------------------
-           FILTER BUTTONS CLEAN LOOK
-        ---------------------------------------- */
-        .filter-btn {
-            padding: 5px 14px;
-            border-radius: 20px;
-            font-size: 14px;
-            text-decoration: none !important;
-            color: #444;
-            border: 1px solid #ccc;
-            transition: 0.3s;
-        }
+    /* ----------------------------------------
+       SEARCH BOX
+    ---------------------------------------- */
+    .search-box {
+        border-radius: 10px;
+        padding: 10px 14px;
+        border: 1px solid #d0d0d0;
+    }
 
-        .filter-btn:hover {
-            background: #0d6efd;
-            color: white;
-            border-color: #0d6efd;
-        }
+    /* ----------------------------------------
+       FILTER BUTTONS CLEAN LOOK
+    ---------------------------------------- */
+    .filter-btn {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        text-decoration: none !important;
+        color: white;
+        border: 1px solid rgba(255,255,255,0.4);
+        backdrop-filter: blur(8px);
+        background: rgba(255,255,255,0.08);
+        transition: 0.3s;
+    }
 
-        .cse { border-color: #0d6efd; }
-        .it { border-color: #198754; }
-        .mecha { border-color: #ffc107; }
-        .civil { border-color: #0dcaf0; }
-        .chem { border-color: #dc3545; }
+    .filter-btn:hover {
+        background: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+        transform: translateY(-2px);
+    }
 
-        /* ----------------------------------------
-           BOOK CARD
-        ---------------------------------------- */
+    .cse { border-color: #6ea8fe; }
+    .it { border-color: #98e0b5; }
+    .mecha { border-color: #ffe58f; }
+    .civil { border-color: #8eeaff; }
+    .chem { border-color: #ffb3b8; }
 
-        .book-card {
-            border-radius: 14px;
-            background: white;
-            transition: all 0.3s ease;
-            overflow: hidden;
-            height: 100%;
-        }
+    /* ----------------------------------------
+       BOOK CARD
+    ---------------------------------------- */
 
-        .book-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-        }
+    .book-card {
+        border-radius: 16px;
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(12px);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+        border: 1px solid rgba(255,255,255,0.15);
+    }
 
-        /* Image styling */
-        .img-holder {
-            height: 250px;
-            overflow: hidden;
-        }
+    .book-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
 
-        .book-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: 0.4s ease;
-        }
+    /* Image styling */
+    .img-holder {
+        height: 250px;
+        overflow: hidden;
+    }
 
-        .book-card:hover .book-img {
-            transform: scale(1.07);
-        }
+    .book-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.4s ease;
+    }
 
-        /* Title clean design */
-        .book-title {
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
+    .book-card:hover .book-img {
+        transform: scale(1.07);
+    }
 
-        /* Status badges */
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 13px;
-        }
-        .available {
-            background: #d4f4d7;
-            color: #157347;
-        }
-        .unavailable {
-            background: #f8d7da;
-            color: #b02a37;
-        }
+    /* Title clean design */
+    .book-title {
+        color: white;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 
-        /* ℹ️ Details icon button */
-        .details-btn {
-            background: #0d6efd;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 50%;
-            display: inline-block;
-            font-size: 18px;
-            transition: 0.3s ease;
-        }
+    .text-muted {
+        color: #cfcfcf !important;
+    }
 
-        .details-btn:hover {
-            background: #0b5ed7;
-            color: white;
-            transform: scale(1.1);
-        }
+    /* Status badges */
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+    }
+    .available {
+        background: #d4f4d7;
+        color: #157347;
+    }
+    .unavailable {
+        background: #f8d7da;
+        color: #b02a37;
+    }
 
-    </style>
+    /* ℹ️ Details icon button */
+    .details-btn {
+        background: #0d6efd;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 50%;
+        display: inline-block;
+        font-size: 18px;
+        transition: 0.3s ease;
+    }
+
+    .details-btn:hover {
+        background: #0b5ed7;
+        transform: scale(1.1);
+    }
+
+</style>
 }
