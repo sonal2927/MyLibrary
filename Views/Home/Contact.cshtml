@@ -12,24 +12,29 @@
         background-size: cover;
     }
 
-    /* 🌈 HERO SECTION – SAME GLASS STYLE AS CARDS */
+    /* 🌈 HERO SECTION WITH SAME CARD CURVE */
     .contact-hero {
-        background: rgba(82, 60, 47, 0.35); 
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: url('/images/librarybg2.jpg') no-repeat center/cover;
+        border-radius: 20px;                    /* SAME AS CARDS */
+        overflow: hidden;                       /* IMPORTANT FOR CURVE */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
         padding: 80px 20px;
         text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+        margin: 20px auto 40px auto;
+        width: 95%;
+        max-width: 1400px;
     }
 
     .contact-hero h1 {
         font-weight: 700;
         color: white;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.6);
     }
 
     .contact-hero p {
         color: #f4f4f4;
         font-size: 1.1rem;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
 
     /* 🌟 GLASS CARD STYLE */
@@ -37,7 +42,7 @@
         background: rgba(255, 255, 255, 0.20);
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
-        border-radius: 18px;
+        border-radius: 20px;      /* SAME CURVE EVERYWHERE */
         padding: 35px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.20);
         border: 1px solid rgba(255, 255, 255, 0.35);
@@ -62,7 +67,7 @@
 
     .map-box {
         height: 300px;
-        border-radius: 15px;
+        border-radius: 20px;
         overflow: hidden;
         border: 1px solid rgba(255,255,255,0.4);
     }
