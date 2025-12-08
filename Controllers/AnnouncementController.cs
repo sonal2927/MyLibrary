@@ -28,9 +28,9 @@ namespace LibraryManagementSystem.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            string? createdBy = HttpContext.Session.GetString("LibraryId");
+            string? createdBy = HttpContext.Session.GetString("LoginId");
             if (string.IsNullOrEmpty(createdBy))
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("List", "Announcement");
 
             model.CreatedBy = createdBy;
             model.CreatedAt = DateTime.Now;
