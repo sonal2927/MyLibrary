@@ -6,6 +6,12 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
+<!-- Pass TempData → Toast -->
+<script>
+    var toastSuccess = '@TempData["Success"]';
+    var toastError = '@TempData["Error"]';
+</script>
+
 <div class="container min-vh-100 d-flex align-items-center justify-content-center">
     <div class="col-md-8 col-lg-7 p-5 rounded-4 shadow glass-effect animate__animated animate__fadeIn">
 
@@ -16,17 +22,8 @@
             <p class="text-muted">Fill in the details to create your account</p>
         </div>
 
-        <!-- Alerts -->
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success text-center">@TempData["Success"]</div>
-        }
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger text-center">@TempData["Error"]</div>
-        }
-
-        @Html.ValidationSummary(true, "", new { @class = "alert alert-warning" })
+        <!-- Validation Summary (no alerts) -->
+        @Html.ValidationSummary(true, "", new { @class = "text-danger fw-semibold mb-2" })
 
         <form asp-action="Register" method="post" novalidate>
             @Html.AntiForgeryToken()
@@ -61,11 +58,11 @@
                     <span asp-validation-for="FullName" class="text-danger"></span>
                 </div>
 
-                <!-- Unified Login Field (Enrollment/FacultyID/LibrarianID) -->
-                <div id="identifierField" class="col-md-6" style="display:none;">
-                    <label id="identifierLabel" class="form-label fw-semibold"></label>
-                    <input asp-for="UserIdentifier" class="form-control shadow-sm" />
-                    <span asp-validation-for="UserIdentifier" class="text-danger"></span>
+                <!-- Enrollment / FacultyId / LibrarianId -->
+                <div id="enrollmentContainer" class="col-md-6" style="display:none;">
+                    <label id="enrollmentLabel" class="form-label fw-semibold"></label>
+                    <input asp-for="EnrollmentNumber" class="form-control shadow-sm" />
+                    <span asp-validation-for="EnrollmentNumber" class="text-danger"></span>
                 </div>
 
                 <!-- Year (Student Only) -->
@@ -156,61 +153,69 @@
         const studentFacultyDepartments = ["CSE", "IT", "Mechanical", "Civil", "Electrical"];
         const librarianDepartments = ["Senior Librarian", "Assistant", "Librarian"];
 
-        function updateFields() 
-        {
-        const role = roleDropdown.value;
+        function updateFields() {
+            const role = roleDropdown.value;
 
-        const identifierField = document.getElementById("identifierField");
-        const identifierLabel = document.getElementById("identifierLabel");
-        const yearField = document.getElementById("yearField");
-        const semesterField = document.getElementById("semesterField");
+            const enrollmentContainer = document.getElementById("enrollmentContainer");
+            const enrollmentLabel = document.getElementById("enrollmentLabel");
+            const yearField = document.getElementById("yearField");
+            const semesterField = document.getElementById("semesterField");
 
-        // Hide all fields
-        identifierField.style.display = "none";
-        yearField.style.display = "none";
-        semesterField.style.display = "none";
+            enrollmentContainer.style.display = "none";
+            yearField.style.display = "none";
+            semesterField.style.display = "none";
 
-        // Show based on role
-        if (role === "Student") {
-            identifierLabel.innerText = "Enrollment Number";
-            identifierField.style.display = "block";
-            yearField.style.display = "block";
-            semesterField.style.display = "block";
-        } else if (role === "Faculty") {
-            identifierLabel.innerText = "Faculty ID";
-            identifierField.style.display = "block";
-        } else if (role === "Librarian") {
-            identifierLabel.innerText = "Librarian ID";
-            identifierField.style.display = "block";
+            // Show correct label
+            if (role === "Student") {
+                enrollmentLabel.innerText = "Enrollment Number";
+                enrollmentContainer.style.display = "block";
+                yearField.style.display = "block";
+                semesterField.style.display = "block";
+            } else if (role === "Faculty") {
+                enrollmentLabel.innerText = "Faculty ID";
+                enrollmentContainer.style.display = "block";
+            } else if (role === "Librarian") {
+                enrollmentLabel.innerText = "Librarian ID";
+                enrollmentContainer.style.display = "block";
+            }
+
+            // Update department options
+            departmentDropdown.innerHTML = '<option value="">-- Select Department --</option>';
+
+            if (role === "Student" || role === "Faculty") {
+                studentFacultyDepartments.forEach(d => {
+                    const opt = document.createElement("option");
+                    opt.value = d;
+                    opt.text = d;
+                    departmentDropdown.add(opt);
+                });
+            } else if (role === "Librarian") {
+                librarianDepartments.forEach(d => {
+                    const opt = document.createElement("option");
+                    opt.value = d;
+                    opt.text = d;
+                    departmentDropdown.add(opt);
+                });
+            }
+
+            // Restore selected on reload
+            if ("@Model?.Department" !== "") {
+                departmentDropdown.value = "@Model?.Department";
+            }
         }
-
-        // Update department dropdown
-        departmentDropdown.innerHTML = '<option value="">-- Select Department --</option>';
-
-        if (role === "Student" || role === "Faculty") {
-            studentFacultyDepartments.forEach(d => {
-                const opt = document.createElement("option");
-                opt.value = d;
-                opt.text = d;
-                departmentDropdown.add(opt);
-            });
-        } else if (role === "Librarian") {
-            librarianDepartments.forEach(d => {
-                const opt = document.createElement("option");
-                opt.value = d;
-                opt.text = d;
-                departmentDropdown.add(opt);
-            });
-        }
-
-        // ⭐ Preserve selected department after form reload
-        if ("@Model?.Department" !== "") {
-            departmentDropdown.value = "@Model?.Department";
-        }
-    }
 
         roleDropdown.addEventListener("change", updateFields);
-        updateFields(); // Run on page load
+        updateFields();
+
+        // AUTO-SHOW TOAST
+        document.addEventListener("DOMContentLoaded", function () {
+            if (toastSuccess && toastSuccess.trim() !== "") {
+                showToast(toastSuccess, "success");
+            }
+            if (toastError && toastError.trim() !== "") {
+                showToast(toastError, "error");
+            }
+        });
     </script>
 }
 

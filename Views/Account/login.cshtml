@@ -16,14 +16,11 @@
             <p class="text-muted">Sign in to continue to your library account</p>
         </div>
 
-        <!-- ❌ Error Message -->
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
-                @ViewBag.Error
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
+        <!-- 🔥 PASS TEMPDATA TO JAVASCRIPT FOR TOAST -->
+        <script>
+            var toastSuccess = '@TempData["Success"]';
+            var toastError = '@TempData["Error"]';
+        </script>
 
         <!-- 🔐 Login Form -->
         <form asp-action="Login" method="post" class="needs-validation" novalidate>
@@ -84,6 +81,7 @@
 
 @section Scripts {
     <script>
+        // Bootstrap validation
         (() => {
             'use strict';
             const forms = document.querySelectorAll('.needs-validation');
@@ -95,8 +93,18 @@
                     }
                     form.classList.add('was-validated');
                 }, false);
-            })();
+            });
         })();
+
+        // 🔥 AUTO-SHOW TOASTS FROM TEMPDATA
+        document.addEventListener("DOMContentLoaded", function () {
+            if (toastSuccess && toastSuccess.trim() !== "") {
+                showToast(toastSuccess, "success");
+            }
+            if (toastError && toastError.trim() !== "") {
+                showToast(toastError, "error");
+            }
+        });
     </script>
 }
 

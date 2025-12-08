@@ -35,66 +35,68 @@ namespace LibraryManagementSystem.Models.Controllers
             return View();
         }
 
-        // -------------------- LOGIN --------------------
         [HttpPost]
-        public IActionResult Login(string role, string loginId, string password)
-        {
-            if (string.IsNullOrWhiteSpace(role) || string.IsNullOrWhiteSpace(loginId) || string.IsNullOrWhiteSpace(password))
-            {
-                TempData["ToastMessage"] = "⚠ Please enter all fields.";
-                TempData["ToastType"] = "warning";
-                return View();
-            }
+public IActionResult Login(string role, string loginId, string password)
+{
+    if (string.IsNullOrWhiteSpace(role) || string.IsNullOrWhiteSpace(loginId) || string.IsNullOrWhiteSpace(password))
+    {
+        TempData["ToastMessage"] = "⚠ Please enter all fields.";
+        TempData["ToastType"] = "warning";
+        return View();
+    }
 
-            role = role.Trim().ToLower();
-            loginId = loginId.Trim().ToLower();
-            password = password.Trim();
+    role = role.Trim().ToLower();
+    loginId = loginId.Trim().ToLower();
+    password = password.Trim();
 
-            // ADMIN fallback (optional)
-            if (role == "admin" && loginId == "admin" && password == "admin")
-            {
-                HttpContext.Session.SetString("UserRole", "Admin");
-                HttpContext.Session.SetString("LoginId", "admin");
-                return RedirectToAction("UserInfo");
-            }
+    // ADMIN fallback
+    if (role == "admin" && loginId == "admin" && password == "admin")
+    {
+        HttpContext.Session.SetString("UserRole", "Admin");
+        HttpContext.Session.SetString("LoginId", "admin");
+        return RedirectToAction("UserInfo");
+    }
 
-            // ALLOW LoginId OR Email
-            var user = _context.Users
-                .FirstOrDefault(u =>
-                    ((u.LoginId ?? "").Trim().ToLower() == loginId ||
-                    (u.Email ?? "").Trim().ToLower() == loginId) &&
-                    (u.Role ?? "").Trim().ToLower() == role);
+    var user = _context.Users.FirstOrDefault(u =>
+        ((u.LoginId ?? "").Trim().ToLower() == loginId ||
+         (u.Email ?? "").Trim().ToLower() == loginId) &&
+         (u.Role ?? "").Trim().ToLower() == role);
 
-            if (user == null || !user.IsApproved)
-            {
-                TempData["ToastMessage"] = "❌ Invalid credentials or account not approved.";
-                TempData["ToastType"] = "danger";
-                return View();
-            }
+    if (user == null)
+    {
+        TempData["ToastMessage"] = "❌ Invalid credentials.";
+        TempData["ToastType"] = "danger";
+        return View();
+    }
 
-            if (string.IsNullOrEmpty(user.PasswordHash) || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-            {
-                TempData["ToastMessage"] = "❌ Invalid credentials.";
-                TempData["ToastType"] = "danger";
-                return View();
-            }
+    if (!user.IsApproved)
+    {
+        TempData["ToastMessage"] = "⏳ Your account is not approved yet.";
+        TempData["ToastType"] = "warning";
+        return View();
+    }
 
-            // 🔥 FIX: Store UserId (int) in session
-            HttpContext.Session.SetInt32("UserId", user.Id);
+    if (string.IsNullOrEmpty(user.PasswordHash) || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+    {
+        TempData["ToastMessage"] = "❌ Invalid credentials.";
+        TempData["ToastType"] = "danger";
+        return View();
+    }
 
-            // Optional: keep LoginId too
-            HttpContext.Session.SetString("LoginId", user.LoginId ?? "");
+    // Store UserId in session
+    HttpContext.Session.SetInt32("UserId", user.Id);
+    HttpContext.Session.SetString("LoginId", user.LoginId ?? "");
+    HttpContext.Session.SetString("UserRole", user.Role ?? "");
 
-            HttpContext.Session.SetString("UserRole", user.Role ?? "");
+    return user.Role.ToLower() switch
+    {
+        "student" => RedirectToAction("StudentDashboard", "Books"),
+        "faculty" => RedirectToAction("FacultyDashboard", "Books"),
+        "librarian" => RedirectToAction("LibrarianDashboard", "Books"),
+        _ => RedirectToAction("Login")
+    };
+}
 
-            return user.Role.ToLower() switch
-            {
-                "student" => RedirectToAction("StudentDashboard", "Books"),
-                "faculty" => RedirectToAction("FacultyDashboard", "Books"),
-                "librarian" => RedirectToAction("LibrarianDashboard", "Books"),
-                _ => RedirectToAction("Login")
-            };
-        }
 
 
 
@@ -180,7 +182,6 @@ namespace LibraryManagementSystem.Models.Controllers
         [HttpGet]
         public IActionResult Register() => View();
 
-        // Registration only collects user details (no password). Admin will approve and generate password.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(UserRegisterViewModel model)
@@ -191,13 +192,10 @@ namespace LibraryManagementSystem.Models.Controllers
                 return View(model);
             }
 
-            // Determine tentative LoginId (flexible):
-            // If EnrollmentNumber provided -> use it (student)
-            // Else if LoginId provided in form -> use it
-            // Else fallback to Email
+            // Student must give enrollment number
             string tentativeLoginId = (model.EnrollmentNumber ?? "").Trim();
-            if (string.IsNullOrEmpty(tentativeLoginId))
-                tentativeLoginId = (model.LoginId ?? "").Trim();
+
+            // Faculty/Librarian: LoginId is NOT required now, admin will assign later
             if (string.IsNullOrEmpty(tentativeLoginId))
                 tentativeLoginId = (model.Email ?? "").Trim();
 
@@ -218,38 +216,38 @@ namespace LibraryManagementSystem.Models.Controllers
                 return View(model);
             }
 
-            // Create User entity (no password yet)
             var user = new User
             {
                 FullName = model.FullName,
                 Email = model.Email,
                 Phone = model.Phone,
-                EnrollmentNumber = string.IsNullOrWhiteSpace(model.EnrollmentNumber) ? null : model.EnrollmentNumber,
-                Year = model.Year,
-                Semester = model.Semester,
+                EnrollmentNumber = model.Role == "Student" ? model.EnrollmentNumber : null,
+                Year = model.Role == "Student" ? model.Year : null,
+                Semester = model.Role == "Student" ? model.Semester : null,
                 Gender = model.Gender,
                 Department = model.Department,
                 Role = model.Role,
-                IsApproved = false,
+                IsApproved = false,  // Waiting for Admin
                 RegisteredAt = DateTime.UtcNow,
                 Address = model.Address
             };
 
-
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Send registration confirmation (without password)
+            // Email notification
             string subject = "Library Registration Request Received";
             string body = $"Hello {user.FullName},<br/><br/>" +
-                          $"Your registration request has been submitted successfully. You will receive an email once the admin approves your account (with login credentials).<br/><br/>" +
-                          $"Thanks,<br/>Library Team";
+                        $"Your registration request has been submitted successfully.<br/>" +
+                        $"The admin will review and approve it shortly.<br/><br/>" +
+                        $"Thanks,<br/>Library Team";
 
             await _emailService.SendEmailAsync(user.Email, subject, body);
 
             TempData["Success"] = "✅ Registration request submitted successfully! Check your email for confirmation.";
             return RedirectToAction("Login");
         }
+
 
         // -------------------- REQUEST BOOK --------------------
         [HttpPost]
