@@ -4,171 +4,157 @@
 }
 
 @section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
 
-<style>
-
-    /* 🌤 Softer Premium Background */
-    body {
-        background: linear-gradient(to bottom right, #f4f6fb, #eef1f7);
-    }
-
-    /* 🌟 Floating Hero Card */
-    .about-hero {
-        max-width: 900px;
-        margin: 60px auto;
-        background: linear-gradient(135deg, #6a11cb, #2575fc);
-        border-radius: 25px;
-        padding: 70px 40px;
-        text-align: center;
-        color: white;
-        box-shadow: 0 25px 40px rgba(0,0,0,0.15);
-        position: relative;
-    }
-
-    .about-hero::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: 25px;
-        padding: 2px;
-        background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0));
-        -webkit-mask:
-            linear-gradient(#fff 0 0) content-box,
-            linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-    }
-
-    .about-hero h1 {
-        font-weight: 800;
-        letter-spacing: .5px;
-        margin-bottom: 15px;
-    }
-
-    /* Section Wrapper */
-    .about-section {
-        max-width: 1100px;
-        margin: auto;
-        padding-bottom: 70px;
-    }
-
-    /* 💎 Ultra-Premium Info Cards */
-    .info-box {
-        background: rgba(255,255,255,0.9);
-        border-radius: 20px;
-        padding: 35px;
-        box-shadow:
-            0 8px 20px rgba(0,0,0,0.06),
-            0 15px 35px rgba(0,0,0,0.04);
-        backdrop-filter: blur(6px);
-        border: 1px solid rgba(230,230,230,0.7);
-        transition: all 0.35s ease;
-    }
-
-    .info-box:hover {
-        transform: translateY(-6px);
-        box-shadow:
-            0 18px 40px rgba(0,0,0,0.08),
-            0 5px 15px rgba(0,0,0,0.05);
-    }
-
-    /* Icon Badge */
-    .icon-badge {
-        width: 45px;
-        height: 45px;
-        border-radius: 12px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: #e8efff;
-        color: #2563eb;
-        font-size: 1.5rem;
-        margin-right: 12px;
-        box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
-    }
-
-    .info-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 18px;
-        font-weight: 600;
-        font-size: 1.2rem;
-        color: #1e40af;
-    }
-
-    ul li {
-        margin-bottom: 6px;
-    }
-
-    @@media (max-width: 768px) {
-        .about-hero {
-            padding: 50px 25px;
-            margin: 40px 10px;
+        /* ----------------------------------------------------
+           🌈 Premium Apple-Style Soft Gradient Background
+           ---------------------------------------------------- */
+        body {
+            background: linear-gradient(145deg, #eef1f7, #f9fafc);
+            background-attachment: fixed;
+            position: relative;
         }
-    }
-</style>
+
+        /* Subtle noise overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("https://www.transparenttextures.com/patterns/asfalt-light.png");
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ----------------------------------------------------
+           🎨 Premium Glass Cards
+           ---------------------------------------------------- */
+        .pro-card {
+            background: rgba(255, 255, 255, 0.65);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 28px;
+            backdrop-filter: blur(14px);
+            box-shadow:
+                0 8px 26px rgba(0, 0, 0, 0.08),
+                inset 0 0 1px rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .pro-card:hover {
+            transform: translateY(-6px);
+            box-shadow:
+                0 12px 32px rgba(0, 0, 0, 0.11),
+                inset 0 0 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .pro-card h4 {
+            font-weight: 700;
+            color: #1f4ddb;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pro-card ul {
+            padding-left: 18px;
+        }
+
+        /* Nice bullet spacing */
+        .pro-card ul li {
+            margin-bottom: 8px;
+        }
+
+        /* Icons */
+        .icon {
+            font-size: 1.2rem;
+            color: #1f4ddb;
+        }
+
+        /* ----------------------------------------------------
+           📌 Layout Adjustments
+           ---------------------------------------------------- */
+        .about-section {
+            padding: 60px 20px;
+        }
+
+        @@media (max-width: 768px) {
+            .pro-card {
+                padding: 22px;
+            }
+        }
+
+    </style>
 }
 
-<!-- 🌟 Floating Hero Card -->
-<div class="about-hero" data-aos="zoom-in">
-    <h1 class="display-6">📚 About SVMIT College Library</h1>
-    <p class="lead">Empowering students and faculty with knowledge, resources & modern digital access.</p>
+<!-- ----------------------------------------------------
+     🌟 HERO HEADER (Same as before — Good & Professional)
+----------------------------------------------------- -->
+<div class="about-hero">
+    <div class="container">
+        <h1 class="display-5 fw-bold">📚 About SVMIT College Library</h1>
+        <p class="lead mt-2">Empowering students and faculty with knowledge, resources & modern digital access.</p>
+    </div>
 </div>
 
-<!-- 📘 Info Section -->
-<div class="about-section row g-4">
 
-    <!-- Mission -->
-    <div class="col-md-6" data-aos="fade-up">
-        <div class="info-box">
-            <div class="info-header">
-                <div class="icon-badge"><i class="bi bi-bullseye"></i></div>
-                Our Mission
+<!-- ----------------------------------------------------
+     🧩 NEW PRO LAYOUT 
+----------------------------------------------------- -->
+<div class="about-section container">
+
+    <div class="row">
+
+        <!-- 🔹 TOP ROW -->
+        <!-- Services Offered -->
+        <div class="col-md-6">
+            <div class="pro-card">
+                <h4><i class="icon bi bi-gear-fill"></i> Services Offered</h4>
+                <ul>
+                    <li>🔍 Online Book Search & Request</li>
+                    <li>📚 Book Issuing & Returning</li>
+                    <li>📝 Reading History Tracking</li>
+                    <li>📬 Request New Books</li>
+                    <li>🛠 Admin & Librarian Dashboards</li>
+                </ul>
             </div>
-            <p>To provide seamless access to books, journals, and digital content — enhancing research and academic excellence.</p>
         </div>
-    </div>
 
-    <!-- Services -->
-    <div class="col-md-6" data-aos="fade-up" data-aos-delay="150">
-        <div class="info-box">
-            <div class="info-header">
-                <div class="icon-badge"><i class="bi bi-gear-fill"></i></div>
-                Services Offered
+        <!-- Library Hours -->
+        <div class="col-md-6">
+            <div class="pro-card">
+                <h4><i class="icon bi bi-clock-history"></i> Library Hours</h4>
+                <p><strong>Monday – Friday:</strong><br>8:30 AM – 4:00 PM</p>
+                <p><strong>Saturday:</strong><br>8:30 AM – 1:00 PM</p>
             </div>
-            <ul>
-                <li>🔍 Online Book Search & Request</li>
-                <li>📚 Book Issuing & Returning</li>
-                <li>📖 Reading History Tracking</li>
-                <li>📬 Request New Books</li>
-                <li>🛠 Admin & Librarian Dashboards</li>
-            </ul>
         </div>
-    </div>
 
-    <!-- Who Can Use -->
-    <div class="col-md-6" data-aos="fade-up">
-        <div class="info-box">
-            <div class="info-header">
-                <div class="icon-badge"><i class="bi bi-people-fill"></i></div>
-                Who Can Use
+
+        <!-- 🔹 SECOND ROW -->
+        <!-- Our Mission -->
+        <div class="col-md-6">
+            <div class="pro-card">
+                <h4><i class="icon bi bi-bullseye"></i> Our Mission</h4>
+                <p>To provide seamless access to books, journals, and digital content — enhancing research and academic excellence.</p>
             </div>
-            <p>All students, faculty, staff, and administrators of SVMIT can access, explore, and request books.</p>
         </div>
-    </div>
 
-    <!-- Library Hours -->
-    <div class="col-md-6" data-aos="fade-up" data-aos-delay="150">
-        <div class="info-box">
-            <div class="info-header">
-                <div class="icon-badge"><i class="bi bi-clock-history"></i></div>
-                Library Hours
+        <!-- Who Can Use -->
+        <div class="col-md-6">
+            <div class="pro-card">
+                <h4><i class="icon bi bi-people-fill"></i> Who Can Use</h4>
+                <p>
+                    Students, faculty, staff, and administrators of SVMIT can access, explore, and request books 
+                    through the digital platform.
+                </p>
             </div>
-            <p><strong>Monday – Friday:</strong><br />8:30 AM – 4:00 PM</p>
-            <p><strong>Saturday:</strong><br />8:30 AM – 1:00 PM</p>
         </div>
-    </div>
 
+    </div>
 </div>
