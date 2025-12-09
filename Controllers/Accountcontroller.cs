@@ -207,37 +207,45 @@ public IActionResult Login(string role, string loginId, string password)
 
         try
         {
-            var user = new User
-            {
-                FullName = model.FullName,
-                Role = model.Role,
-                Department = model.Department,
-                LoginId = model.UserIdentifier,
-                Email = model.Email,
-                Phone = model.Phone,
-                Gender = model.Gender,
-                Year = model.Year,
-                Semester = model.Semester,
-                DateOfBirth = model.DateOfBirth,
-                Address = model.Address,
-                IsApproved = false,
-                IsDeleted = false,
-                RegisteredAt = DateTime.UtcNow
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "✅ Your request is submitted! Please wait for admin approval.";
-            return RedirectToAction("Register"); // prevents double submission
-        }
-        catch (Exception ex)
+        var user = new User
         {
-            // Log error for debugging
-            Console.WriteLine(ex);
-            TempData["Error"] = "Something went wrong! Please try again later.";
-            return View(model);
-        }
+            FullName = model.FullName,
+            Role = model.Role,
+            Department = model.Department,
+            LoginId = model.UserIdentifier,
+            Email = model.Email,
+            Phone = model.Phone,
+            Gender = model.Gender,
+            Year = model.Year,
+            Semester = model.Semester,
+            DateOfBirth = model.DateOfBirth,
+            Address = model.Address,
+            IsApproved = false,
+            IsDeleted = false,
+            RegisteredAt = DateTime.UtcNow
+        };
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        // ⭐ ADD THIS ⭐
+        await _emailService.SendEmailAsync(
+            user.Email,
+            "Registration Successful - Pending Approval",
+            $"<p>Hi {user.FullName},</p><p>Your registration was successful! Admin will approve you soon.</p>"
+        );
+        // ⭐ END ADD ⭐
+
+        TempData["Success"] = "✅ Your request is submitted! Please wait for admin approval.";
+        return RedirectToAction("Register");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+        TempData["Error"] = "Something went wrong! Please try again later.";
+        return View(model);
+    }
+
     }
 
 
