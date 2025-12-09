@@ -2,10 +2,12 @@ using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using LibraryManagementSystem.Services;
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Email Service (optional)
+// Email Service
 builder.Services.AddTransient<IEmailService, EmailService>();
 
 // Database
@@ -14,6 +16,11 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
         builder.Configuration.GetConnectionString("LibraryConnection"),
         new MySqlServerVersion(new Version(8, 0, 34))
     ));
+
+// ⭐ Persist DataProtection Keys (REQUIRED FOR RAILWAY)
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
+    .SetApplicationName("MyLibraryApp");
 
 builder.Services.AddAuthorization();
 builder.Services.AddSession();
@@ -36,7 +43,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// ❌ DO NOT USE HTTPS REDIRECTION ON RAILWAY
+// DO NOT USE HTTPS on Railway
 // app.UseHttpsRedirection();
 
 app.UseStaticFiles();
@@ -46,11 +53,12 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
 
-// ✔ Railway PORT binding (FINAL FIX)
+// ⭐ Force Railway Port Binding
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Clear(); // IMPORTANT
+app.Urls.Clear();
 app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Run();
