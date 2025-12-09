@@ -7,41 +7,40 @@ using LibraryManagementSystem.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// -------------------- Logging --------------------
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-
-// -------------------- MVC --------------------
+// -------------------- 1) Add MVC --------------------
 builder.Services.AddControllersWithViews();
 
-// -------------------- Database Context --------------------
-builder.Services.AddDbContext<LibraryDbContext>(options =>
+// -------------------- 2) Add Database Context --------------------
+builder.Services.AddDbContext<LibraryContext>(options =>
 {
     var conn = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseMySql(conn, ServerVersion.AutoDetect(conn));
 });
 
-// -------------------- Session --------------------
+// -------------------- 3) Add Session --------------------
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
-// -------------------- Data Protection --------------------
-var dataProtectionPath = Path.Combine(Directory.GetCurrentDirectory(), "dataprotection-keys");
+// -------------------- 4) Data Protection --------------------
+// Use Railway persistent folder /data for keys
+var dataProtectionPath = "/data/dataprotection-keys";
 Directory.CreateDirectory(dataProtectionPath);
 
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionPath))
     .SetApplicationName("MyLibrarySystem");
 
-// -------------------- SMTP / Email --------------------
+// -------------------- 5) SMTP Settings --------------------
 builder.Services.Configure<EmailService>(builder.Configuration.GetSection("EmailSettings"));
 
 // -------------------- Build App --------------------
 var app = builder.Build();
 
-// -------------------- Middleware --------------------
+// -------------------- 6) Middleware --------------------
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -49,23 +48,23 @@ if (!app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseDeveloperExceptionPage();
-}
-
-// On Railway, HTTPS may break container, so redirect only in development
-if (app.Environment.IsDevelopment())
-{
     app.UseHttpsRedirection();
 }
 
 app.UseStaticFiles();
+
 app.UseRouting();
+
+// Session must come before Authorization
 app.UseSession();
+
 app.UseAuthorization();
 
-// -------------------- Default Route --------------------
+// -------------------- 7) Default Route --------------------
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
 
+// -------------------- 8) Run --------------------
 app.Run();
