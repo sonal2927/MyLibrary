@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using LibraryManagementSystem.Data;
 using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Services;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,14 +32,17 @@ builder.Services.AddSession(options =>
 // ---------------------------------------
 // 4) Data Protection FIX for Railway
 // ---------------------------------------
+var dataProtectionPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/dataprotection-keys");
+Directory.CreateDirectory(dataProtectionPath);
+
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("/app/dataprotection-keys"))
+    .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionPath))
     .SetApplicationName("MyLibrarySystem");
 
 // ---------------------------------------
 // 5) SMTP Settings from Environment Variables
 // ---------------------------------------
-builder.Services.Configure<EmailService>(builder.Configuration.GetSection("EmailService"));
+builder.Services.Configure<EmailService>(builder.Configuration.GetSection("EmailSettings"));
 
 // ---------------------------------------
 var app = builder.Build();
@@ -56,9 +60,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseSession();
-
 app.UseAuthorization();
 
 // ---------------------------------------
