@@ -182,7 +182,6 @@ public IActionResult Login(string role, string loginId, string password)
         [HttpGet]
         public IActionResult Register() => View();
 
-        // Registration only collects user details (no password). Admin will approve and generate password.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(UserRegisterViewModel model)
@@ -193,13 +192,10 @@ public IActionResult Login(string role, string loginId, string password)
                 return View(model);
             }
 
-            // Determine tentative LoginId (flexible):
-            // If EnrollmentNumber provided -> use it (student)
-            // Else if LoginId provided in form -> use it
-            // Else fallback to Email
+            // Student must give enrollment number
             string tentativeLoginId = (model.EnrollmentNumber ?? "").Trim();
-            if (string.IsNullOrEmpty(tentativeLoginId))
-                tentativeLoginId = (model.LoginId ?? "").Trim();
+
+            // Faculty/Librarian: LoginId is NOT required now, admin will assign later
             if (string.IsNullOrEmpty(tentativeLoginId))
                 tentativeLoginId = (model.Email ?? "").Trim();
 
@@ -220,37 +216,36 @@ public IActionResult Login(string role, string loginId, string password)
                 return View(model);
             }
 
-            // Create User entity (no password yet)
             var user = new User
             {
                 FullName = model.FullName,
                 Email = model.Email,
                 Phone = model.Phone,
-                EnrollmentNumber = string.IsNullOrWhiteSpace(model.EnrollmentNumber) ? null : model.EnrollmentNumber,
-                Year = model.Year,
-                Semester = model.Semester,
+                EnrollmentNumber = model.Role == "Student" ? model.EnrollmentNumber : null,
+                Year = model.Role == "Student" ? model.Year : null,
+                Semester = model.Role == "Student" ? model.Semester : null,
                 Gender = model.Gender,
                 Department = model.Department,
                 Role = model.Role,
-                IsApproved = false,
+                IsApproved = false,  // Waiting for Admin
                 RegisteredAt = DateTime.UtcNow,
                 Address = model.Address
             };
 
-
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Send registration confirmation (without password)
+            // Email notification
             string subject = "Library Registration Request Received";
             string body = $"Hello {user.FullName},<br/><br/>" +
-                          $"Your registration request has been submitted successfully. You will receive an email once the admin approves your account (with login credentials).<br/><br/>" +
-                          $"Thanks,<br/>Library Team";
+                        $"Your registration request has been submitted successfully.<br/>" +
+                        $"The admin will review and approve it shortly.<br/><br/>" +
+                        $"Thanks,<br/>Library Team";
 
             await _emailService.SendEmailAsync(user.Email, subject, body);
 
             TempData["Success"] = "✅ Registration request submitted successfully! Check your email for confirmation.";
-            return RedirectToAction("Login");
+            return RedirectToAction("login");
         }
 
 
