@@ -24,13 +24,10 @@ namespace LibraryManagementSystem.Services
         {
             var smtpSection = _config.GetSection("Smtp");
 
-            var host = smtpSection["Host"];
-            var port = int.Parse(smtpSection["Port"] ?? "587");
+            var host = smtpSection["Host"] ?? "smtp-relay.sendinblue.com";
+            var port = int.Parse(smtpSection["Port"] ?? "465"); // Use 465 SSL by default
             var user = smtpSection["Username"];
-
-            var pass = Environment.GetEnvironmentVariable("SMTP_PASSWORD")
-                       ?? smtpSection["Password"];
-
+            var pass = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? smtpSection["Password"];
             var from = smtpSection["From"];
 
             if (string.IsNullOrWhiteSpace(from))
@@ -38,10 +35,11 @@ namespace LibraryManagementSystem.Services
 
             using var client = new SmtpClient(host, port)
             {
-                EnableSsl = false, // ⭐ MOST IMPORTANT FIX — Brevo + Railway
+                EnableSsl = true,                  // SSL for 465 or STARTTLS for 587/2525
                 UseDefaultCredentials = false,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
-                Credentials = new NetworkCredential(user, pass)
+                Credentials = new NetworkCredential(user, pass),
+                Timeout = 15000                     // 15 seconds timeout
             };
 
             var mail = new MailMessage()
@@ -54,7 +52,21 @@ namespace LibraryManagementSystem.Services
 
             mail.To.Add(toEmail);
 
-            await client.SendMailAsync(mail);
+            try
+            {
+                await client.SendMailAsync(mail);
+                Console.WriteLine($"✅ Email sent to {toEmail}");
+            }
+            catch (SmtpException ex)
+            {
+                Console.WriteLine($"❌ SMTP Exception: {ex.StatusCode} - {ex.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ General Exception: {ex.Message}");
+                throw;
+            }
         }
     }
 }

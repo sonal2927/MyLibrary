@@ -45,13 +45,14 @@ app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
 
+// ✔ Railway PORT binding — must be BEFORE routing
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Clear();
+app.Urls.Add($"http://0.0.0.0:{port}");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// ✔ Railway PORT binding (FINAL FIX)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Clear(); // IMPORTANT
-app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Run();
