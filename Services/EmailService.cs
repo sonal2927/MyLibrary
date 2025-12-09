@@ -44,10 +44,15 @@ namespace LibraryManagementSystem.Services
                 Credentials = new NetworkCredential(user, pass)
             };
 
-            var mail = new MailMessage(from, toEmail, subject, htmlMessage)
+           var mail = new MailMessage()
             {
-                IsBodyHtml = true
+                From = new MailAddress(from, "MyLibrary System"),
+                Subject = subject,
+                Body = htmlMessage,
+                IsBodyHtml = true,
             };
+            mail.To.Add(toEmail);
+
 
             await client.SendMailAsync(mail);
         }
