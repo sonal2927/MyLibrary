@@ -1,70 +1,57 @@
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.EntityFrameworkCore;
-using LibraryManagementSystem.Data;
-using LibraryManagementSystem.Services;
-using System.IO;
 using LibraryManagementSystem.Models;
+using LibraryManagementSystem.Data;
+using Microsoft.EntityFrameworkCore;
+using LibraryManagementSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// -------------------- 1) Add MVC --------------------
+// Email Service (optional)
+builder.Services.AddTransient<IEmailService, EmailService>();
+
+// Database
+builder.Services.AddDbContext<LibraryDbContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("LibraryConnection"),
+        new MySqlServerVersion(new Version(8, 0, 34))
+    ));
+
+builder.Services.AddAuthorization();
+builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 
-// -------------------- 2) Add Database Context --------------------
-builder.Services.AddDbContext<LibraryContext>(options =>
-{
-    var conn = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseMySql(conn, ServerVersion.AutoDetect(conn));
-});
-
-// -------------------- 3) Add Session --------------------
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
-// -------------------- 4) Data Protection --------------------
-// Use Railway persistent folder /data for keys
-var dataProtectionPath = "/data/dataprotection-keys";
-Directory.CreateDirectory(dataProtectionPath);
-
-builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionPath))
-    .SetApplicationName("MyLibrarySystem");
-
-// -------------------- 5) SMTP Settings --------------------
-builder.Services.Configure<EmailService>(builder.Configuration.GetSection("EmailSettings"));
-
-// -------------------- Build App --------------------
 var app = builder.Build();
 
-// -------------------- 6) Middleware --------------------
+
+// Run migrations + seed
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+    context.Database.Migrate();
+    DbSeeder.Seed(context);
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-else
-{
-    app.UseHttpsRedirection();
-}
+
+// ❌ DO NOT USE HTTPS REDIRECTION ON RAILWAY
+// app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-
 app.UseRouting();
-
-// Session must come before Authorization
 app.UseSession();
-
 app.UseAuthorization();
 
-// -------------------- 7) Default Route --------------------
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}"
-);
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// -------------------- 8) Run --------------------
+// ✔ Railway PORT binding (FINAL FIX)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Clear(); // IMPORTANT
+app.Urls.Add($"http://0.0.0.0:{port}");
+
 app.Run();
