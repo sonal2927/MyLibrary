@@ -186,7 +186,6 @@ public IActionResult Login(string role, string loginId, string password)
     {
         return View();
     }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(UserRegisterViewModel model)
@@ -198,7 +197,8 @@ public IActionResult Login(string role, string loginId, string password)
         }
 
         // Check if email already exists
-        bool emailExists = await _context.Users.AnyAsync(u => u.Email.ToLower() == model.Email.ToLower());
+        bool emailExists = await _context.Users
+            .AnyAsync(u => u.Email.ToLower() == model.Email.ToLower());
         if (emailExists)
         {
             TempData["Error"] = "Email already registered!";
@@ -222,25 +222,24 @@ public IActionResult Login(string role, string loginId, string password)
                 Address = model.Address,
                 IsApproved = false,
                 IsDeleted = false,
-                RegisteredAt = DateTime.Now
+                RegisteredAt = DateTime.UtcNow
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Use consistent TempData key
-            TempData["Success"] = "Your request is submitted! Please wait for admin approval.";
-
-            // Redirect to GET Register to avoid double submission on refresh
-            return RedirectToAction(nameof(Register));
+            TempData["Success"] = "✅ Your request is submitted! Please wait for admin approval.";
+            return RedirectToAction("Register"); // prevents double submission
         }
         catch (Exception ex)
         {
-            // Optionally log ex here
+            // Log error for debugging
+            Console.WriteLine(ex);
             TempData["Error"] = "Something went wrong! Please try again later.";
             return View(model);
         }
     }
+
 
 
 

@@ -1,38 +1,33 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using LibraryManagementSystem.Data;
-using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Services;
 using System.IO;
+using LibraryManagementSystem.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---------------------------------------
-// 1) Add MVC
-// ---------------------------------------
+// -------------------- Logging --------------------
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+// -------------------- MVC --------------------
 builder.Services.AddControllersWithViews();
 
-// ---------------------------------------
-// 2) Add Database Context
-// ---------------------------------------
+// -------------------- Database Context --------------------
 builder.Services.AddDbContext<LibraryDbContext>(options =>
 {
     var conn = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseMySql(conn, ServerVersion.AutoDetect(conn));
 });
 
-// ---------------------------------------
-// 3) Add Session
-// ---------------------------------------
+// -------------------- Session --------------------
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
 
-// ---------------------------------------
-// 4) Data Protection FIX for Railway
-// ---------------------------------------
-// Store keys outside wwwroot, so they survive container restarts
+// -------------------- Data Protection --------------------
 var dataProtectionPath = Path.Combine(Directory.GetCurrentDirectory(), "dataprotection-keys");
 Directory.CreateDirectory(dataProtectionPath);
 
@@ -40,17 +35,13 @@ builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionPath))
     .SetApplicationName("MyLibrarySystem");
 
-// ---------------------------------------
-// 5) SMTP Settings from Environment Variables
-// ---------------------------------------
+// -------------------- SMTP / Email --------------------
 builder.Services.Configure<EmailService>(builder.Configuration.GetSection("EmailSettings"));
 
-// ---------------------------------------
+// -------------------- Build App --------------------
 var app = builder.Build();
 
-// ---------------------------------------
-// 6) Middleware Pipeline
-// ---------------------------------------
+// -------------------- Middleware --------------------
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -58,21 +49,21 @@ if (!app.Environment.IsDevelopment())
 }
 else
 {
-    // Detailed errors in development
     app.UseDeveloperExceptionPage();
 }
 
-// Railway uses only HTTP by default, disable HTTPS redirection
-// app.UseHttpsRedirection();
+// On Railway, HTTPS may break container, so redirect only in development
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
 
-// ---------------------------------------
-// 7) Route
-// ---------------------------------------
+// -------------------- Default Route --------------------
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
