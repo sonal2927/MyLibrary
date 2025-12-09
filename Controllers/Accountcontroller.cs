@@ -17,12 +17,15 @@ namespace LibraryManagementSystem.Models.Controllers
     {
         private readonly LibraryDbContext _context;
         private readonly IEmailService _emailService;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(LibraryDbContext context, IEmailService emailService)
+        public AccountController(LibraryDbContext context, IEmailService emailService, ILogger<AccountController> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
 
         // Login page (GET)
         [HttpGet]
@@ -187,74 +190,80 @@ public IActionResult Login(string role, string loginId, string password)
         return View();
     }
     [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(UserRegisterViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                TempData["Error"] = "⚠ Please fill in all required fields correctly.";
-                return View(model);
-            }
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Register(UserRegisterViewModel model)
+{
+    if (!ModelState.IsValid)
+    {
+        TempData["Error"] = "⚠ Please fill in all required fields correctly.";
+        return View(model);
+    }
 
-            // Determine tentative LoginId (flexible):
-            // If EnrollmentNumber provided -> use it (student)
-            // Else if LoginId provided in form -> use it
-            // Else fallback to Email
-            string tentativeLoginId = (model.EnrollmentNumber ?? "").Trim();
-            if (string.IsNullOrEmpty(tentativeLoginId))
-                tentativeLoginId = (model.LoginId ?? "").Trim();
-            if (string.IsNullOrEmpty(tentativeLoginId))
-                tentativeLoginId = (model.Email ?? "").Trim();
+    // Determine tentative LoginId
+    string tentativeLoginId = (model.EnrollmentNumber ?? "").Trim();
+    if (string.IsNullOrEmpty(tentativeLoginId))
+        tentativeLoginId = (model.LoginId ?? "").Trim();
+    if (string.IsNullOrEmpty(tentativeLoginId))
+        tentativeLoginId = (model.Email ?? "").Trim();
 
-            if (string.IsNullOrEmpty(tentativeLoginId))
-            {
-                TempData["Error"] = "⚠ Could not determine Login ID. Provide EnrollmentNumber or Email.";
-                return View(model);
-            }
+    if (string.IsNullOrEmpty(tentativeLoginId))
+    {
+        TempData["Error"] = "⚠ Could not determine Login ID. Provide EnrollmentNumber or Email.";
+        return View(model);
+    }
 
-            // Uniqueness checks
-            bool loginExists = _context.Users.Any(u => (u.LoginId ?? "").ToLower() == tentativeLoginId.ToLower());
-            bool emailExists = _context.Users.Any(u => (u.Email ?? "").ToLower() == (model.Email ?? "").ToLower());
-            bool phoneExists = _context.Users.Any(u => (u.Phone ?? "") == model.Phone);
+    // Uniqueness checks
+    bool loginExists = _context.Users.Any(u => (u.LoginId ?? "").ToLower() == tentativeLoginId.ToLower());
+    bool emailExists = _context.Users.Any(u => (u.Email ?? "").ToLower() == (model.Email ?? "").ToLower());
+    bool phoneExists = _context.Users.Any(u => (u.Phone ?? "") == model.Phone);
 
-            if (loginExists || emailExists || phoneExists)
-            {
-                TempData["Error"] = "⚠ Login ID, Email or Phone already registered.";
-                return View(model);
-            }
+    if (loginExists || emailExists || phoneExists)
+    {
+        TempData["Error"] = "⚠ Login ID, Email or Phone already registered.";
+        return View(model);
+    }
 
-            // Create User entity (no password yet)
-            var user = new User
-            {
-                FullName = model.FullName,
-                Email = model.Email,
-                Phone = model.Phone,
-                EnrollmentNumber = string.IsNullOrWhiteSpace(model.EnrollmentNumber) ? null : model.EnrollmentNumber,
-                Year = model.Year,
-                Semester = model.Semester,
-                Gender = model.Gender,
-                Department = model.Department,
-                Role = model.Role,
-                IsApproved = false,
-                RegisteredAt = DateTime.UtcNow,
-                Address = model.Address
-            };
+    // Create User entity (no password yet)
+    var user = new User
+    {
+        FullName = model.FullName,
+        Email = model.Email,
+        Phone = model.Phone,
+        EnrollmentNumber = string.IsNullOrWhiteSpace(model.EnrollmentNumber) ? null : model.EnrollmentNumber,
+        Year = model.Year,
+        Semester = model.Semester,
+        Gender = model.Gender,
+        Department = model.Department,
+        Role = model.Role,
+        IsApproved = false,
+        RegisteredAt = DateTime.UtcNow,
+        Address = model.Address
+    };
 
+    _context.Users.Add(user);
+    await _context.SaveChangesAsync();
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+    // Prepare email
+    string subject = "Library Registration Request Received";
+    string body = $"Hello {user.FullName},<br/><br/>" +
+                  $"Your registration request has been submitted successfully. You will receive an email once the admin approves your account (with login credentials).<br/><br/>" +
+                  $"Thanks,<br/>Library Team";
 
-            // Send registration confirmation (without password)
-            string subject = "Library Registration Request Received";
-            string body = $"Hello {user.FullName},<br/><br/>" +
-                          $"Your registration request has been submitted successfully. You will receive an email once the admin approves your account (with login credentials).<br/><br/>" +
-                          $"Thanks,<br/>Library Team";
+    // ✅ Send email safely
+    try
+    {
+        await _emailService.SendEmailAsync(user.Email, subject, body);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Failed to send registration email to {Email}", user.Email);
+        TempData["Warning"] = "⚠ Registration submitted, but email could not be sent. Admin will contact you.";
+    }
 
-            await _emailService.SendEmailAsync(user.Email, subject, body);
+    TempData["Success"] = "✅ Registration request submitted successfully!";
+    return RedirectToAction("Login");
+}
 
-            TempData["Success"] = "✅ Registration request submitted successfully! Check your email for confirmation.";
-            return RedirectToAction("Login");
-        }
 
 
 
