@@ -28,31 +28,31 @@ namespace LibraryManagementSystem.Services
             var port = int.Parse(smtpSection["Port"] ?? "587");
             var user = smtpSection["Username"];
 
-            // 🚀 READ PASSWORD FROM RAILWAY ENV VARIABLE FIRST
             var pass = Environment.GetEnvironmentVariable("SMTP_PASSWORD")
-                       ?? smtpSection["Password"]; // fallback for local use
+                       ?? smtpSection["Password"];
 
             var from = smtpSection["From"];
-            var enableSsl = bool.Parse(smtpSection["EnableSsl"] ?? "true");
 
             if (string.IsNullOrWhiteSpace(from))
                 throw new InvalidOperationException("SMTP 'From' address is not configured.");
 
             using var client = new SmtpClient(host, port)
             {
-                EnableSsl = enableSsl,
+                EnableSsl = false, // ⭐ MOST IMPORTANT FIX — Brevo + Railway
+                UseDefaultCredentials = false,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
                 Credentials = new NetworkCredential(user, pass)
             };
 
-           var mail = new MailMessage()
+            var mail = new MailMessage()
             {
                 From = new MailAddress(from, "MyLibrary System"),
                 Subject = subject,
                 Body = htmlMessage,
                 IsBodyHtml = true,
             };
-            mail.To.Add(toEmail);
 
+            mail.To.Add(toEmail);
 
             await client.SendMailAsync(mail);
         }
