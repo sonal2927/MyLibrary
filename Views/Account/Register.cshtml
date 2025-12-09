@@ -202,8 +202,13 @@
             }
         }
 
-        roleDropdown.addEventListener("change", updateFields);
-        updateFields(); // Run on page load
+       roleDropdown.addEventListener("change", updateFields);
+
+        // Run on page load ONLY if role already selected
+        if (roleDropdown.value !== "") {
+            updateFields();
+        }
+
     </script>
 }
 
