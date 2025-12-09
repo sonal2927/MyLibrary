@@ -32,7 +32,8 @@ builder.Services.AddSession(options =>
 // ---------------------------------------
 // 4) Data Protection FIX for Railway
 // ---------------------------------------
-var dataProtectionPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/dataprotection-keys");
+// Store keys outside wwwroot, so they survive container restarts
+var dataProtectionPath = Path.Combine(Directory.GetCurrentDirectory(), "dataprotection-keys");
 Directory.CreateDirectory(dataProtectionPath);
 
 builder.Services.AddDataProtection()
@@ -55,10 +56,16 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+else
+{
+    // Detailed errors in development
+    app.UseDeveloperExceptionPage();
+}
 
-app.UseHttpsRedirection();
+// Railway uses only HTTP by default, disable HTTPS redirection
+// app.UseHttpsRedirection();
+
 app.UseStaticFiles();
-
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
