@@ -24,49 +24,32 @@ namespace LibraryManagementSystem.Services
         {
             var smtpSection = _config.GetSection("Smtp");
 
-            var host = smtpSection["Host"] ?? "smtp-relay.sendinblue.com";
-            var port = int.Parse(smtpSection["Port"] ?? "465"); // Use 465 SSL by default
+            var host = smtpSection["Host"];
+            var port = int.Parse(smtpSection["Port"] ?? "587");
             var user = smtpSection["Username"];
-            var pass = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? smtpSection["Password"];
+
+            // 🚀 READ PASSWORD FROM RAILWAY ENV VARIABLE FIRST
+            var pass = Environment.GetEnvironmentVariable("SMTP_PASSWORD")
+                       ?? smtpSection["Password"]; // fallback for local use
+
             var from = smtpSection["From"];
+            var enableSsl = bool.Parse(smtpSection["EnableSsl"] ?? "true");
 
             if (string.IsNullOrWhiteSpace(from))
                 throw new InvalidOperationException("SMTP 'From' address is not configured.");
 
             using var client = new SmtpClient(host, port)
             {
-                EnableSsl = true,                  // SSL for 465 or STARTTLS for 587/2525
-                UseDefaultCredentials = false,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                Credentials = new NetworkCredential(user, pass),
-                Timeout = 15000                     // 15 seconds timeout
+                EnableSsl = enableSsl,
+                Credentials = new NetworkCredential(user, pass)
             };
 
-            var mail = new MailMessage()
+            var mail = new MailMessage(from, toEmail, subject, htmlMessage)
             {
-                From = new MailAddress(from, "MyLibrary System"),
-                Subject = subject,
-                Body = htmlMessage,
-                IsBodyHtml = true,
+                IsBodyHtml = true
             };
 
-            mail.To.Add(toEmail);
-
-            try
-            {
-                await client.SendMailAsync(mail);
-                Console.WriteLine($"✅ Email sent to {toEmail}");
-            }
-            catch (SmtpException ex)
-            {
-                Console.WriteLine($"❌ SMTP Exception: {ex.StatusCode} - {ex.Message}");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"❌ General Exception: {ex.Message}");
-                throw;
-            }
+            await client.SendMailAsync(mail);
         }
     }
 }

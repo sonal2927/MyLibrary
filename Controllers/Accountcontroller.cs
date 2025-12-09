@@ -187,66 +187,74 @@ public IActionResult Login(string role, string loginId, string password)
         return View();
     }
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(UserRegisterViewModel model)
-    {
-        if (!ModelState.IsValid)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(UserRegisterViewModel model)
         {
-            TempData["Error"] = "Please fix validation errors!";
-            return View(model);
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "⚠ Please fill in all required fields correctly.";
+                return View(model);
+            }
+
+            // Determine tentative LoginId (flexible):
+            // If EnrollmentNumber provided -> use it (student)
+            // Else if LoginId provided in form -> use it
+            // Else fallback to Email
+            string tentativeLoginId = (model.EnrollmentNumber ?? "").Trim();
+            if (string.IsNullOrEmpty(tentativeLoginId))
+                tentativeLoginId = (model.LoginId ?? "").Trim();
+            if (string.IsNullOrEmpty(tentativeLoginId))
+                tentativeLoginId = (model.Email ?? "").Trim();
+
+            if (string.IsNullOrEmpty(tentativeLoginId))
+            {
+                TempData["Error"] = "⚠ Could not determine Login ID. Provide EnrollmentNumber or Email.";
+                return View(model);
+            }
+
+            // Uniqueness checks
+            bool loginExists = _context.Users.Any(u => (u.LoginId ?? "").ToLower() == tentativeLoginId.ToLower());
+            bool emailExists = _context.Users.Any(u => (u.Email ?? "").ToLower() == (model.Email ?? "").ToLower());
+            bool phoneExists = _context.Users.Any(u => (u.Phone ?? "") == model.Phone);
+
+            if (loginExists || emailExists || phoneExists)
+            {
+                TempData["Error"] = "⚠ Login ID, Email or Phone already registered.";
+                return View(model);
+            }
+
+            // Create User entity (no password yet)
+            var user = new User
+            {
+                FullName = model.FullName,
+                Email = model.Email,
+                Phone = model.Phone,
+                EnrollmentNumber = string.IsNullOrWhiteSpace(model.EnrollmentNumber) ? null : model.EnrollmentNumber,
+                Year = model.Year,
+                Semester = model.Semester,
+                Gender = model.Gender,
+                Department = model.Department,
+                Role = model.Role,
+                IsApproved = false,
+                RegisteredAt = DateTime.UtcNow,
+                Address = model.Address
+            };
+
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            // Send registration confirmation (without password)
+            string subject = "Library Registration Request Received";
+            string body = $"Hello {user.FullName},<br/><br/>" +
+                          $"Your registration request has been submitted successfully. You will receive an email once the admin approves your account (with login credentials).<br/><br/>" +
+                          $"Thanks,<br/>Library Team";
+
+            await _emailService.SendEmailAsync(user.Email, subject, body);
+
+            TempData["Success"] = "✅ Registration request submitted successfully! Check your email for confirmation.";
+            return RedirectToAction("Login");
         }
-
-        // Check if email already exists
-        bool emailExists = await _context.Users
-            .AnyAsync(u => u.Email.ToLower() == model.Email.ToLower());
-        if (emailExists)
-        {
-            TempData["Error"] = "Email already registered!";
-            return View(model);
-        }
-
-        try
-        {
-        var user = new User
-        {
-            FullName = model.FullName,
-            Role = model.Role,
-            Department = model.Department,
-            LoginId = model.UserIdentifier,
-            Email = model.Email,
-            Phone = model.Phone,
-            Gender = model.Gender,
-            Year = model.Year,
-            Semester = model.Semester,
-            DateOfBirth = model.DateOfBirth,
-            Address = model.Address,
-            IsApproved = false,
-            IsDeleted = false,
-            RegisteredAt = DateTime.UtcNow
-        };
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
-        // ⭐ ADD THIS ⭐
-        await _emailService.SendEmailAsync(
-            user.Email,
-            "Registration Successful - Pending Approval",
-            $"<p>Hi {user.FullName},</p><p>Your registration was successful! Admin will approve you soon.</p>"
-        );
-        // ⭐ END ADD ⭐
-
-        TempData["Success"] = "✅ Your request is submitted! Please wait for admin approval.";
-        return RedirectToAction("Register");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine(ex);
-        TempData["Error"] = "Something went wrong! Please try again later.";
-        return View(model);
-    }
-
-    }
 
 
 
