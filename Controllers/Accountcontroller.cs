@@ -329,7 +329,7 @@ public async Task<IActionResult> Register(UserRegisterViewModel model)
         // Approve user -> generate password, hash it, store only hash, email plain password to user (admin not shown)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ApproveUser(int id)
+        public async Task<IActionResult> ApproveUser(int id)
         {
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
             if (user != null && !user.IsApproved)
@@ -337,38 +337,45 @@ public async Task<IActionResult> Register(UserRegisterViewModel model)
                 user.IsApproved = true;
                 user.ApprovedAt = DateTime.UtcNow;
 
-                // Ensure LoginId exists (flexible logic)
+                // Ensure LoginId exists
                 if (string.IsNullOrWhiteSpace(user.LoginId))
                 {
-                    // Prefer EnrollmentNumber for students, otherwise use Email
                     if ((user.Role ?? "").Equals("Student", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(user.EnrollmentNumber))
                         user.LoginId = user.EnrollmentNumber;
                     else
                         user.LoginId = user.Email;
                 }
 
-                // Generate secure random password
+                // Generate password
                 string plainPassword = GenerateSecurePassword(10);
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(plainPassword);
 
                 _context.SaveChanges();
 
-                // Email the generated password to the user (admin does not see it)
+                // Prepare email
                 string subject = "Library Account Approved - Credentials";
                 string body = $"Hello {user.FullName},<br/><br/>" +
-                              $"Your library account has been approved.<br/>" +
-                              $"Login ID: <strong>{user.LoginId}</strong><br/>" +
-                              $"Password: <strong>{plainPassword}</strong><br/><br/>" +
-                              $"Please change your password after first login.<br/><br/>" +
-                              $"Thanks,<br/>Library Team";
+                            $"Your library account has been approved.<br/>" +
+                            $"Login ID: <strong>{user.LoginId}</strong><br/>" +
+                            $"Password: <strong>{plainPassword}</strong><br/><br/>" +
+                            $"Please change your password after first login.<br/><br/>" +
+                            $"Thanks,<br/>Library Team";
 
-                // We await but this method signature is sync; use Task.Run to avoid changing signature.
-                Task.Run(async () => await _emailService.SendEmailAsync(user.Email, subject, body));
-
-                TempData["Success"] = $"✅ {user.FullName} approved. Credentials emailed to user.";
+                // ✅ Send email safely with try-catch
+                try
+                {
+                    await _emailService.SendEmailAsync(user.Email, subject, body);
+                    TempData["Success"] = $"✅ {user.FullName} approved. Credentials emailed to user.";
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send approval email to {Email}", user.Email);
+                    TempData["Warning"] = $"✅ {user.FullName} approved, but email could not be sent. Admin will contact the user.";
+                }
             }
             return RedirectToAction("AdminApproval");
         }
+
 
         // -------------------- DELETE USER REQUEST --------------------
         [HttpPost]
