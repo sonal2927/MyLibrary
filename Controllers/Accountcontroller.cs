@@ -189,7 +189,7 @@ public IActionResult Login(string role, string loginId, string password)
     {
         return View();
     }
-    [HttpPost]
+   [HttpPost]
 [ValidateAntiForgeryToken]
 public async Task<IActionResult> Register(UserRegisterViewModel model)
 {
@@ -199,7 +199,7 @@ public async Task<IActionResult> Register(UserRegisterViewModel model)
         return View(model);
     }
 
-    // Determine tentative LoginId
+    // Determine LoginId
     string tentativeLoginId = (model.EnrollmentNumber ?? "").Trim();
     if (string.IsNullOrEmpty(tentativeLoginId))
         tentativeLoginId = (model.LoginId ?? "").Trim();
@@ -208,14 +208,19 @@ public async Task<IActionResult> Register(UserRegisterViewModel model)
 
     if (string.IsNullOrEmpty(tentativeLoginId))
     {
-        TempData["Error"] = "⚠ Could not determine Login ID. Provide EnrollmentNumber or Email.";
+        TempData["Error"] = "⚠ Could not determine Login ID. Provide Enrollment Number or Email.";
         return View(model);
     }
 
     // Uniqueness checks
-    bool loginExists = _context.Users.Any(u => (u.LoginId ?? "").ToLower() == tentativeLoginId.ToLower());
-    bool emailExists = _context.Users.Any(u => (u.Email ?? "").ToLower() == (model.Email ?? "").ToLower());
-    bool phoneExists = _context.Users.Any(u => (u.Phone ?? "") == model.Phone);
+    bool loginExists = _context.Users.Any(u =>
+        (u.LoginId ?? "").ToLower() == tentativeLoginId.ToLower());
+
+    bool emailExists = _context.Users.Any(u =>
+        (u.Email ?? "").ToLower() == (model.Email ?? "").ToLower());
+
+    bool phoneExists = _context.Users.Any(u =>
+        (u.Phone ?? "") == model.Phone);
 
     if (loginExists || emailExists || phoneExists)
     {
@@ -223,13 +228,15 @@ public async Task<IActionResult> Register(UserRegisterViewModel model)
         return View(model);
     }
 
-    // Create User entity (no password yet)
+    // Create User entity
     var user = new User
     {
         FullName = model.FullName,
         Email = model.Email,
         Phone = model.Phone,
-        EnrollmentNumber = string.IsNullOrWhiteSpace(model.EnrollmentNumber) ? null : model.EnrollmentNumber,
+        EnrollmentNumber = string.IsNullOrWhiteSpace(model.EnrollmentNumber)
+            ? null
+            : model.EnrollmentNumber,
         Year = model.Year,
         Semester = model.Semester,
         Gender = model.Gender,
@@ -243,25 +250,30 @@ public async Task<IActionResult> Register(UserRegisterViewModel model)
     _context.Users.Add(user);
     await _context.SaveChangesAsync();
 
-    // Prepare email
+    // Email content
     string subject = "Library Registration Request Received";
-    string body = $"Hello {user.FullName},<br/><br/>" +
-                  $"Your registration request has been submitted successfully. You will receive an email once the admin approves your account (with login credentials).<br/><br/>" +
-                  $"Thanks,<br/>Library Team";
+    string body =
+        $"Hello {user.FullName},<br/><br/>" +
+        $"Your registration request has been submitted successfully.<br/>" +
+        $"You will receive another email once the admin approves your account.<br/><br/>" +
+        $"Thanks,<br/>Library Team";
 
-    // ✅ Send email safely
-    try
+    // ✅ Send email in background (NON-BLOCKING)
+    _ = Task.Run(async () =>
     {
-        await _emailService.SendEmailAsync(user.Email, subject, body);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Failed to send registration email to {Email}", user.Email);
-        TempData["Warning"] = "⚠ Registration submitted, but email could not be sent. Admin will contact you.";
-    }
+        try
+        {
+            await _emailService.SendEmailAsync(user.Email, subject, body);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Failed to send registration email to {Email}", user.Email);
+        }
+    });
 
     TempData["Success"] = "✅ Registration request submitted successfully!";
-    return RedirectToAction("Login");
+    return RedirectToAction("Login", "Account");
 }
 
 

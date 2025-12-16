@@ -1,48 +1,64 @@
 using System;
-using System.Net;
-using System.Net.Mail;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Services
 {
+    // ✅ INTERFACE (IMPORTANT)
     public interface IEmailService
     {
         Task SendEmailAsync(string toEmail, string subject, string htmlMessage);
     }
 
+    // ✅ IMPLEMENTATION
     public class EmailService : IEmailService
     {
+        private readonly HttpClient _httpClient;
+
+        public EmailService()
+        {
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+
         public async Task SendEmailAsync(string toEmail, string subject, string htmlMessage)
         {
-            // 🔐 Read ONLY from Environment Variables
-            var host = Environment.GetEnvironmentVariable("SMTP_HOST");
-            var port = Environment.GetEnvironmentVariable("SMTP_PORT");
-            var username = Environment.GetEnvironmentVariable("SMTP_USERNAME");
-            var password = Environment.GetEnvironmentVariable("SMTP_PASSWORD");
-            var from = Environment.GetEnvironmentVariable("SMTP_FROM");
+            var apiKey = Environment.GetEnvironmentVariable("BREVO_API_KEY");
 
-            // 🛑 Safety check
-            if (string.IsNullOrWhiteSpace(host) ||
-                string.IsNullOrWhiteSpace(port) ||
-                string.IsNullOrWhiteSpace(username) ||
-                string.IsNullOrWhiteSpace(password) ||
-                string.IsNullOrWhiteSpace(from))
-            {
-                throw new Exception("SMTP environment variables are not fully configured.");
-            }
+            if (string.IsNullOrWhiteSpace(apiKey))
+                throw new Exception("Brevo API key is missing");
 
-            using var client = new SmtpClient(host, int.Parse(port))
+            _httpClient.DefaultRequestHeaders.Remove("api-key");
+            _httpClient.DefaultRequestHeaders.Add("api-key", apiKey);
+
+            var payload = new
             {
-                EnableSsl = true,
-                Credentials = new NetworkCredential(username, password)
+                sender = new
+                {
+                    name = "Library Management System",
+                    email = "sonalgohil027@gmail.com"
+                },
+                to = new[]
+                {
+                    new { email = toEmail }
+                },
+                subject = subject,
+                htmlContent = htmlMessage
             };
 
-            var mail = new MailMessage(from, toEmail, subject, htmlMessage)
-            {
-                IsBodyHtml = true
-            };
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            await client.SendMailAsync(mail);
+            var response = await _httpClient.PostAsync(
+                "https://api.brevo.com/v3/smtp/email",
+                content
+            );
+
+            response.EnsureSuccessStatusCode();
         }
     }
 }
