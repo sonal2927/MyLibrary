@@ -107,19 +107,53 @@
 
 @section Styles {
     <style>
-        /* Table hover enhancement */
-        table.table-hover tbody tr:hover {
-            background-color: #f1f9ff;
+        /* Page background */
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            min-height: 100vh;
         }
 
-        /* Card shadow */
+        /* Card shadow and styling */
         .card {
             border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        /* Input group icons */
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        /* Table styling */
+        table {
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        table.table-hover tbody tr:hover {
+            background-color: #dbe9f7;
+        }
+
+        /* Input group styling */
         .input-group-text {
             background-color: #e9ecef;
+        }
+
+        /* Buttons hover */
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 0.5rem;
         }
 
         /* Responsive tweaks */
@@ -130,3 +164,4 @@
         }
     </style>
 }
+
