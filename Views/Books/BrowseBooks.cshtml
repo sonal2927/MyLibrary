@@ -146,7 +146,7 @@
 
                             @if (Context.Session.GetString("LoginId") != null)
                             {
-                                <a class="add-btn" asp-action="RequestBook" asp-route-id="@book.Id">
+                                <a class="add-btn" asp-action="IssueBookForm" asp-route-id="@book.Id">
                                     <i class="bi bi-plus-lg"></i> Add
                                 </a>
                             }
