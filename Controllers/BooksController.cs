@@ -86,18 +86,75 @@ namespace LibraryManagementSystem.Controllers
         }
 
         [HttpGet]
+        public IActionResult BrowseBooks(string category = "", string search = "")
+        {
+            // 🔹 Base query (NO tracking + NO duplicates)
+            var books = _context.Books
+                .AsNoTracking()
+                .GroupBy(b => new { b.Title, b.Author })
+                .Select(g => g.First())
+                .AsQueryable();
+
+            // 🔹 Category filter
+            if (!string.IsNullOrEmpty(category))
+            {
+                books = books.Where(b =>
+                    b.Department.ToLower().Contains(category.ToLower()));
+            }
+
+            // 🔹 Search filter
+            if (!string.IsNullOrEmpty(search))
+            {
+                books = books.Where(b =>
+                    b.Title.ToLower().Contains(search.ToLower()) ||
+                    b.Author.ToLower().Contains(search.ToLower()));
+            }
+
+            // 🔹 Category list for UI
+            var distinctCategories = _context.Books
+                .Select(b => b.Department)
+                .Distinct()
+                .ToList();
+
+            ViewBag.Categories = distinctCategories;
+            ViewBag.SelectedCategory = category;
+            ViewBag.SearchQuery = search;
+
+            return View(books.ToList());
+        }
+
+        [HttpGet]
         public IActionResult Create() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Book book, IFormFile imageFile)
         {
-            if (!ModelState.IsValid) return View(book);
+            if (!ModelState.IsValid)
+                return View(book);
 
+            // 🔒 Prevent duplicate books
+            bool alreadyExists = _context.Books.Any(b =>
+                b.Title == book.Title &&
+                b.Author == book.Author &&
+                b.Department == book.Department
+            );
+
+            if (alreadyExists)
+            {
+                TempData["Error"] = "❌ This book already exists.";
+                return View(book);
+            }
+
+            // 📸 Image upload
             if (imageFile != null && imageFile.Length > 0)
             {
                 var fileName = Path.GetFileName(imageFile.FileName);
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/books/", fileName);
+                var path = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot/images/books/",
+                    fileName
+                );
 
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
@@ -112,7 +169,8 @@ namespace LibraryManagementSystem.Controllers
 
             TempData["Success"] = "✅ Book added successfully!";
             return RedirectToAction(nameof(BrowseBooks));
-        }
+}
+
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -457,34 +515,7 @@ namespace LibraryManagementSystem.Controllers
         }
 
 
-        [HttpGet]
-        public IActionResult BrowseBooks(string category = "", string search = "")
-        {
-            var books = _context.Books.AsQueryable();
-
-            if (!string.IsNullOrEmpty(category))
-            {
-                books = books.Where(b => b.Department.ToLower().Contains(category.ToLower()));
-            }
-
-            if (!string.IsNullOrEmpty(search))
-            {
-                books = books.Where(b => b.Title.ToLower().Contains(search.ToLower()) || b.Author.ToLower().Contains(search.ToLower()));
-            }
-
-            var distinctCategories = _context.Books
-                .Select(b => b.Department)
-                .Distinct()
-                .ToList();
-
-            ViewBag.Categories = distinctCategories;
-            ViewBag.SelectedCategory = category;
-            ViewBag.SearchQuery = search;
-
-           
-         return View(books.ToList());
-        }
-       
+        
        
         [HttpGet]
         public async Task<IActionResult> MyProfile(bool edit = false)
