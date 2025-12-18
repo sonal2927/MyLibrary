@@ -224,41 +224,34 @@ namespace LibraryManagementSystem.Controllers
                     return RedirectToAction(nameof(BrowseBooks));
                 }
 
+        
         [HttpGet]
         public IActionResult Search(string title, string author, string category, string isbn)
         {
-            var books = _context.Books.AsQueryable();
+            var books = _context.Books
+                .Where(b => b.Title != null && b.Author != null && b.Department != null);
 
             if (!string.IsNullOrWhiteSpace(title))
-            {
-                books = books.Where(b =>
-                    b.Title != null &&
-                    b.Title.ToLower().Contains(title.ToLower()));
-            }
+                books = books.Where(b => b.Title.Contains(title));
 
             if (!string.IsNullOrWhiteSpace(author))
-            {
-                books = books.Where(b =>
-                    b.Author != null &&
-                    b.Author.ToLower().Contains(author.ToLower()));
-            }
+                books = books.Where(b => b.Author.Contains(author));
 
             if (!string.IsNullOrWhiteSpace(category))
-            {
-                books = books.Where(b =>
-                    b.Department != null &&
-                    b.Department.ToLower() == category.ToLower());
-            }
+                books = books.Where(b => b.Department == category);
 
             if (!string.IsNullOrWhiteSpace(isbn))
-            {
-                books = books.Where(b =>
-                    b.ISBN != null &&
-                    b.ISBN.Contains(isbn));
-            }
+                books = books.Where(b => b.ISBN == isbn);
 
-            return View(books.ToList());
+            // ✅ REMOVE DUPLICATES (IMPORTANT)
+            var result = books
+                .GroupBy(b => new { b.Title, b.Author, b.Department })
+                .Select(g => g.First())
+                .ToList();
+
+            return View("Search", result); // ✅ SAME SEARCH VIEW
         }
+
 
 
         [HttpGet]
