@@ -11,10 +11,11 @@
         background: url('/images/librarybg.jpg') no-repeat center center fixed;
         background-size: cover;
 
-        /* 🔥 Top-bottom curve */
-        border-radius: 25px;
-        overflow: hidden;
+        /* ❌ overflow: hidden;  REMOVE THIS */
+        overflow-x: hidden;   /* ✅ horizontal scroll band */
+        overflow-y: auto;     /* ✅ vertical scroll allowed */
     }
+
 
     /* 🌈 HERO SECTION – GLASS */
     .contact-hero {
