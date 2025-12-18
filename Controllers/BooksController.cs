@@ -227,16 +227,30 @@ namespace LibraryManagementSystem.Controllers
         [HttpGet]
         public IActionResult Search(string title, string author, string category, string isbn)
         {
-            var books = _context.Books.AsQueryable();
+            // 🔹 Base query: NO tracking + NO duplicates
+            var books = _context.Books
+                .AsNoTracking()
+                .GroupBy(b => new { b.Title, b.Author })
+                .Select(g => g.First())
+                .AsQueryable();
 
-            if (!string.IsNullOrEmpty(title))
-                books = books.Where(b => b.Title.Contains(title));
-            if (!string.IsNullOrEmpty(author))
-                books = books.Where(b => b.Author.Contains(author));
-            if (!string.IsNullOrEmpty(category))
-                books = books.Where(b => b.Department.Contains(category));
-            if (!string.IsNullOrEmpty(isbn))
-                books = books.Where(b => !string.IsNullOrEmpty(b.ISBN) && b.ISBN.Contains(isbn));
+            // 🔍 Filters
+            if (!string.IsNullOrWhiteSpace(title))
+                books = books.Where(b =>
+                    b.Title.ToLower().Contains(title.ToLower()));
+
+            if (!string.IsNullOrWhiteSpace(author))
+                books = books.Where(b =>
+                    b.Author.ToLower().Contains(author.ToLower()));
+
+            if (!string.IsNullOrWhiteSpace(category))
+                books = books.Where(b =>
+                    b.Department.ToLower().Contains(category.ToLower()));
+
+            if (!string.IsNullOrWhiteSpace(isbn))
+                books = books.Where(b =>
+                    !string.IsNullOrEmpty(b.ISBN) &&
+                    b.ISBN.ToLower().Contains(isbn.ToLower()));
 
             return View(books.ToList());
         }
