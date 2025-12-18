@@ -221,20 +221,18 @@ namespace LibraryManagementSystem.Controllers
                 TempData["Success"] = "🗑️ Book deleted successfully!";
             }
 
-            return RedirectToAction(nameof(BrowseBooks));
-        }
+                    return RedirectToAction(nameof(BrowseBooks));
+                }
 
-        [HttpGet]
-        public IActionResult Search(string title, string author, string category, string isbn)
+                [HttpGet]
+        public IActionResult Search(string title, string author, string category)
         {
-            // 🔹 Base query: NO tracking + NO duplicates
             var books = _context.Books
                 .AsNoTracking()
                 .GroupBy(b => new { b.Title, b.Author })
                 .Select(g => g.First())
                 .AsQueryable();
 
-            // 🔍 Filters
             if (!string.IsNullOrWhiteSpace(title))
                 books = books.Where(b =>
                     b.Title.ToLower().Contains(title.ToLower()));
@@ -243,17 +241,13 @@ namespace LibraryManagementSystem.Controllers
                 books = books.Where(b =>
                     b.Author.ToLower().Contains(author.ToLower()));
 
-            if (!string.IsNullOrWhiteSpace(category))
+            // 🔥 EXACT department match
+            if (!string.IsNullOrWhiteSpace(category) && category != "All")
                 books = books.Where(b =>
-                    b.Department.ToLower().Contains(category.ToLower()));
-
-            if (!string.IsNullOrWhiteSpace(isbn))
-                books = books.Where(b =>
-                    !string.IsNullOrEmpty(b.ISBN) &&
-                    b.ISBN.ToLower().Contains(isbn.ToLower()));
+                    b.Department.ToLower() == category.ToLower());
 
             return View(books.ToList());
-        }
+            }
 
         [HttpGet]
         public IActionResult IssuedBooks()
