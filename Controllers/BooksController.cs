@@ -224,30 +224,42 @@ namespace LibraryManagementSystem.Controllers
                     return RedirectToAction(nameof(BrowseBooks));
                 }
 
-                [HttpGet]
-        public IActionResult Search(string title, string author, string category)
+        [HttpGet]
+        public IActionResult Search(string title, string author, string category, string isbn)
         {
-            var books = _context.Books
-                .AsNoTracking()
-                .GroupBy(b => new { b.Title, b.Author })
-                .Select(g => g.First())
-                .AsQueryable();
+            var books = _context.Books.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(title))
+            {
                 books = books.Where(b =>
+                    b.Title != null &&
                     b.Title.ToLower().Contains(title.ToLower()));
+            }
 
             if (!string.IsNullOrWhiteSpace(author))
+            {
                 books = books.Where(b =>
+                    b.Author != null &&
                     b.Author.ToLower().Contains(author.ToLower()));
+            }
 
-            // 🔥 EXACT department match
-            if (!string.IsNullOrWhiteSpace(category) && category != "All")
+            if (!string.IsNullOrWhiteSpace(category))
+            {
                 books = books.Where(b =>
+                    b.Department != null &&
                     b.Department.ToLower() == category.ToLower());
+            }
+
+            if (!string.IsNullOrWhiteSpace(isbn))
+            {
+                books = books.Where(b =>
+                    b.ISBN != null &&
+                    b.ISBN.Contains(isbn));
+            }
 
             return View(books.ToList());
-            }
+        }
+
 
         [HttpGet]
         public IActionResult IssuedBooks()
